@@ -5,7 +5,7 @@
 
 <h3>SAP CONNECTION DEMO</h3>
 <label for="pno">Personel Number</label>
-<input onsubmit="FetchDataFromSap" @bind="@FieldPno" type="number" class="form-control" name="pno" id="pno"  placeholder="Enter PNO">
+<input @onkeydown="FetchDataFromSap" @bind="@FieldPno" type="number" class="form-control" name="pno" id="pno" placeholder="Enter PNO">
 <br />
 <div class="text-center m-2">
     <button type="button" class="btn btn-success " @onclick="FetchDataFromSap">Fetch SAP DATA</button>
