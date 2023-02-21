@@ -1,0 +1,41 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+
+<button class="btn btn-primary" @onclick="test">Click me</button>
+<span id="res">@rest</span>
+
+
+@code {
+    string rest;
+
+
+    void test()
+    {
+        string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+
+        using var connection = new SapNwRfc.SapConnection(connectionString);
+
+        connection.Connect();
+        var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+        var result = someFunction.Invoke<SomeFunctionResult>(new SomeFunctionParameters
+            {
+                Pno = "00002399",
+            });
+
+            rest = result.Items[0].Name.ToString();
+
+        Console.Write(result.Items);
+    }
+
+
+}
+
+
+
+<SurveyPrompt Title="How is Blazor working for you?" />

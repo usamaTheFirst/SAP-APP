@@ -1,0 +1,52 @@
+
+**** Trace file opened at 2023-02-21 10:44:13.247606 UTC+05:00 (Pakistan Standard Time), Encoding UTF-8
+NW RFC Library: SDK variant, Release 750 Patch Level 11
+Compilation date          : Jan 14 2023 01:04:49
+CPIC library              : 753.2022.12.23 version 3
+NI library                : 40
+Kernel Release            : 753 Patch Level 1115
+Current working directory : C:\Users\ufayyaz\source\repos\SAPConnection\SAPConnection
+Program                   : iisexpress
+User                      : ufayyaz
+Hardware                  : PC with Windows NT 4x AMD64 Level 6 (Mod 58 Step 9)
+Operating_system          : Windows NT 10.0
+Hostname                  : HO-IT-WS-59
+IP address                : 10.5.103.187
+IPv6 address              : fe80::f284:a7b:10e9:bb3
+Global trace level        : 0
+
+>> Passed parameters
+	ASHOST: 10.1.25.168
+	CLIENT: 300
+	LANG: EN
+	PASSWD: (- secret -)
+	POOL_SIZE: 5
+	SYSNR: 00
+	TRACE: 8
+	USER: abapdev
+<< Passed parameters
+
+
+>> RfcOptions
+	Partner Char Size: 1
+	Client: 300
+	User: abapdev
+	Passwd: (- secret -)
+	Language: E
+	SysNr: 00
+	ASHost: 10.1.25.168
+	Codepage: 1100
+	Trace: 32767
+	LogonCheck: 1
+	CompressionType: 1
+	Serialization: 0
+	Ignore Char Conv Errors: 0
+	Substitution Char: 35
+	UseRoundtripOptimization: Off
+	Delta Manager: 1
+<< RfcOptions
+
+2023-02-21 10:44:13.248006 [02984] 	>> RfcOptions::determineType
+determined type RFC_CLIENT
+2023-02-21 10:44:13.248069 [02984] 	<< RfcOptions::determineType returned 0
+
