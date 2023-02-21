@@ -30,10 +30,13 @@ class SomeFunctionResultItem
     public string Name { get; set; }
     [SapName("CNIC")]
     public string CNIC { get; set; }
-    [SapName("JOINING_DATE")]
-    public string Joining { get; set; }
+    [SapName("ZZDEPTT_DESC")]
+    public string Unit { get; set; }
     [SapName("DESIGNATION_DESC")]
     public string Designation { get; set; }
+
+    [SapName("PERNR")]
+    public string Pno { get; set; }
 
 }
 
