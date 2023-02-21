@@ -1,0 +1,64 @@
+﻿@page "/sap"
+
+<h3>SAP CONNECTION DEMO</h3>
+<label for="pno">Personel Number</label>
+<input @bind="@Pno" type="number" class="form-control" name="pno" id="pno" aria-describedby="emailHelp" placeholder="Enter PNO">
+<br />
+<div class="text-center m-2">
+    <button type="button" class="btn btn-success " @onclick="FetchDataFromSap">Fetch SAP DATA</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Full Name</th>
+            <th scope="col">CNIC</th>
+            <th scope="col">Designation</th>
+            <th scope="col">Joining Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">@Name</th>
+            <td>@CNIC</td>
+            <td>@Designation</td>
+            <td>@JoiningDate</td>
+        </tr>
+       
+    </tbody>
+</table>
+
+
+
+@code {
+    string Name;
+    string CNIC;
+    string Designation;
+    string JoiningDate;
+
+    String Pno;
+
+
+    void FetchDataFromSap()
+    {
+        string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+
+        using var connection = new SapNwRfc.SapConnection(connectionString);
+
+        connection.Connect();
+        var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+        var result = someFunction.Invoke<SomeFunctionResult>(new SomeFunctionParameters
+            {
+                Pno = Pno,
+            });
+
+        Name = result.Items[0].Name.ToString();
+        CNIC = result.Items[0].CNIC.ToString();
+        Designation = result.Items[0].Designation.ToString();
+        JoiningDate = result.Items[0].Joining.ToString();
+
+        Console.Write(result.Items);
+    }
+
+
+}
