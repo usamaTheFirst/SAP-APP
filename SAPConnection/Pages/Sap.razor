@@ -1,8 +1,11 @@
 ﻿@page "/sap"
 
+@inject IToastService toastService
+
+
 <h3>SAP CONNECTION DEMO</h3>
 <label for="pno">Personel Number</label>
-<input @bind="@FieldPno" type="number" class="form-control" name="pno" id="pno"  placeholder="Enter PNO">
+<input onsubmit="FetchDataFromSap" @bind="@FieldPno" type="number" class="form-control" name="pno" id="pno"  placeholder="Enter PNO">
 <br />
 <div class="text-center m-2">
     <button type="button" class="btn btn-success " @onclick="FetchDataFromSap">Fetch SAP DATA</button>
@@ -78,7 +81,7 @@
             JoiningDate = result.Items[0].JoiningDate.Date.ToString("dd/MM/yyyy");}
         catch(Exception e)
         {
-            
+            toastService.ShowError("No Record exists against the entered P.Number.");
         }
 
        
