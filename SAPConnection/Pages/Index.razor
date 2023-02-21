@@ -1,11 +1,15 @@
 ﻿@page "/"
 @inject IToastService toastService
+@inject AuthenticationStateProvider AuthNStateProvider
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+<h1>@UserName</h1>
 
 
 <button class="btn btn-primary" @onclick="test">Click me</button>
@@ -17,6 +21,7 @@ Welcome to your new app.
 
 
     string rest;
+    public string UserName { get; set; }
 
 
     void test()
@@ -34,11 +39,30 @@ Welcome to your new app.
                 Pno = "00000810",
             });
 
-            rest = result.Items[0].Name.ToString();
+        rest = result.Items[0].Name.ToString();
 
         Console.Write(result.Items);
     }
 
+
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    try
+    //    {
+    //        var authState = await AuthNStateProvider.GetAuthenticationStateAsync();
+    //        var user = authState.User;
+
+    //        if (authState.User.Identity != null)
+    //        {
+    //             UserName = user.FindFirst(u => u.Type.Contains("Pno")).Value.ToString();
+    //        }
+    //    }
+    //    catch
+    //    {
+    //        UserName = "Exception:User display name not set!";
+    //    }
+    ////}
 
 }
 
