@@ -16,15 +16,24 @@
             <th scope="col">CNIC</th>
             <th scope="col">Designation</th>
             <th scope="col">Unit</th>
+            <th scope="col">Department</th>
+            <th scope="col">Joining Date</th>
+
+
+
         </tr>
     </thead>
     <tbody>
         <tr>
             <th scope="row">@Pno</th>
-            <th scope="row">@Name</th>
+            <td >@Name</td>
             <td>@CNIC</td>
             <td>@Designation</td>
             <td>@Unit</td>
+            <td>@Department</td>
+            <td>@JoiningDate</td>
+
+
         </tr>
        
     </tbody>
@@ -38,6 +47,8 @@
     string Designation;
     string Unit;
     string Pno;
+    string Department;
+    string JoiningDate;
 
     string FieldPno;
 
@@ -55,13 +66,25 @@
                 Pno = FieldPno,
             });
 
-        Name = result.Items[0].Name.ToString();
+        try
+        {
+            
+         Name = result.Items[0].Name.ToString();
         CNIC = result.Items[0].CNIC.ToString();
         Designation = result.Items[0].Designation.ToString();
         Unit = result.Items[0].Unit.ToString();
         Pno = result.Items[0].Pno.ToString();
+        Department = result.Items[0].Department.ToString();
+            JoiningDate = result.Items[0].JoiningDate.Date.ToString("dd/MM/yyyy");}
+        catch(Exception e)
+        {
+            
+        }
 
-        Console.Write(result.Items);
+       
+
+
+
     }
 
 

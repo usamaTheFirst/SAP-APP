@@ -31,12 +31,18 @@ class SomeFunctionResultItem
     [SapName("CNIC")]
     public string CNIC { get; set; }
     [SapName("ZZDEPTT_DESC")]
-    public string Unit { get; set; }
+    public string Department { get; set; }
     [SapName("DESIGNATION_DESC")]
     public string Designation { get; set; }
 
     [SapName("PERNR")]
     public string Pno { get; set; }
+
+    [SapName("ORGUNIT_DESC")]
+    public string Unit { get; set; }
+
+    [SapName("JOINING_DATE")]
+    public DateTime JoiningDate{ get; set; }
 
 }
 

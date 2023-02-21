@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject IToastService toastService
 
 <PageTitle>Index</PageTitle>
 
@@ -12,11 +13,16 @@ Welcome to your new app.
 
 
 @code {
+
+
+
     string rest;
 
 
     void test()
     {
+        toastService.ShowInfo("I'm an INFO message");
+
         string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
 
         using var connection = new SapNwRfc.SapConnection(connectionString);
