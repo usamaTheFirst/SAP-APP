@@ -13,7 +13,7 @@
                 <label>Request Date : </label>
             </td>
             <td width = 30%>
-                <input @bind ="@date" type="text" id='date-time' readonly size="35" />
+                <input type="text" id='date-time' readonly size="35" />
             </td>
             <td width = 20%>
                 <label> Status : </label>
@@ -187,7 +187,6 @@
 @code {
     private static bool IsShow { get; set; } = true;
 
-    string date = DateTime.now().ToString();
     private void Show()
     {
         IsShow = !IsShow;
