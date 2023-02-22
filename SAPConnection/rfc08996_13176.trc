@@ -1,5 +1,5 @@
 
-**** Trace file opened at 2023-02-21 14:35:26.018489 UTC+05:00 (Pakistan Standard Time), Encoding UTF-8
+**** Trace file opened at 2023-02-22 09:41:37.210567 UTC+05:00 (Pakistan Standard Time), Encoding UTF-8
 NW RFC Library: SDK variant, Release 750 Patch Level 11
 Compilation date          : Jan 14 2023 01:04:49
 CPIC library              : 753.2022.12.23 version 3
@@ -46,7 +46,7 @@ Global trace level        : 0
 	Delta Manager: 1
 << RfcOptions
 
-2023-02-21 14:35:26.018841 [22720] 	>> RfcOptions::determineType
+2023-02-22 09:41:37.217157 [13176] 	>> RfcOptions::determineType
 determined type RFC_CLIENT
-2023-02-21 14:35:26.018895 [22720] 	<< RfcOptions::determineType returned 0
+2023-02-22 09:41:37.217641 [13176] 	<< RfcOptions::determineType returned 0
 
