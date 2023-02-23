@@ -12,19 +12,19 @@ namespace SAPConnection.Pages
         }
     }
 }
-class SomeFunctionParameters
+class SAPInputParameter
 {
     [SapName("PNO")]
     public string Pno { get; set; }
 }
 
-class SomeFunctionResult
+class SAPRFCResult
 {
     [SapName("EMP_DATA")]
-    public SomeFunctionResultItem[] Items { get; set; }
+    public SAPRFCResultItem[] Items { get; set; }
 }
 
-class SomeFunctionResultItem
+class SAPRFCResultItem
 {
     [SapName("FULLNAME")]
     public string Name { get; set; }

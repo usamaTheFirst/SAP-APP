@@ -1,5 +1,24 @@
 ﻿@page "/leave"
 
+
+@inject IToastService toastService
+@inject AuthenticationStateProvider AuthNStateProvider
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
+@using Microsoft.Extensions.Options;
+@using SAPConnection.Areas.Identity.Data;
+@using SAPConnection.Data;
+@inject IHttpContextAccessor httpContextAccessor
+
+@inject UserManager<ApplicationUser> userManager
+@inject IHttpContextAccessor httpContextAccessor
+@inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
+
+
+
+
+
 <center><h1 style="font-family:Georgia; font-size:x-large;">Leave Application Form</h1></center>
 <form>
     <table cellpadding="14" width=100%>
@@ -13,7 +32,7 @@
                 <label>Request Date : </label>
             </td>
             <td width = 30%>
-                <input type="text" id='date-time' readonly size="35" />
+                <span data-date-time="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss %")"></span>
             </td>
             <td width = 20%>
                 <label> Status : </label>
@@ -27,13 +46,13 @@
                 <label>Employee Name : </label>
             </td>
             <td>
-                <input type="text" readonly value="Muhammad Aakash Saqlain Bukhari" size="35"/>
+                <input type="text" readonly value="@Name" size="35"/>
             </td>
             <td>
                 <label>Employee Number : </label>
             </td>
             <td>
-                <input type="text" readonly value="30000625" size="35" />
+                <input type="text" readonly value="@Pno" size="35" />
             </td>
         </tr>
         <tr>
@@ -41,13 +60,13 @@
                 <label>Department : </label>
             </td>
             <td>
-                <input type="text" readonly value="ICT" size="35" />
+                <input type="text" readonly value="@Department" size="35" />
             </td>
             <td>
                 <label>Designation : </label>
             </td>
             <td>
-                <input type="text" readonly value="Management Associate" size="35" />
+                <input type="text" readonly value="@Designation" size="35" />
             </td>
         </tr>
         <tr style="background-color: #000080; color: white; font-weight:500; font-size:larger">
@@ -187,8 +206,61 @@
 @code {
     private static bool IsShow { get; set; } = true;
 
+    string Name;
+    string Designation;
+    string Department;
+    string Pno;
+    string Date;
     private void Show()
     {
         IsShow = !IsShow;
     }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+        using var context = new SAPConnectionContext(dbContextOptions);
+
+        var pno = await context.Users
+            .Where(u => u.Id == user.Id)
+            .Select(u => u.Pno)
+            .FirstOrDefaultAsync();
+        Pno = pno.ToString();
+        string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+
+        using var connection = new SapNwRfc.SapConnection(connectionString);
+
+        connection.Connect();
+        var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+        var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
+            {
+                Pno = Pno,
+            });
+
+        try
+        {
+
+            Name = result.Items[0].Name.ToString();
+            Designation = result.Items[0].Designation.ToString();
+            Department = result.Items[0].Department.ToString();
+            Pno = result.Items[0].Pno.ToString();
+            Date = DateTime.Now.Date.ToString();
+
+        }
+        catch (Exception e)
+        {
+            toastService.ShowError("No Record exists against the entered P.Number.");
+        }
+
+
+
+
+
+    }
+
+
 }

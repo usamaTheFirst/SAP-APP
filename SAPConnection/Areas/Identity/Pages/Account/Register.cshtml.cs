@@ -82,7 +82,7 @@ namespace SAPConnection.Areas.Identity.Pages.Account
 
 
             [Required]
-            [Display(Name = "Personnel Number")]
+            [Display(Name = "Pno")]
             public int Pno { get; set; }
 
             /// <summary>

@@ -5,11 +5,15 @@ using SAPConnection.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SAPConnection.Areas.Identity.Data;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SAPConnectionContextConnection") ?? throw new InvalidOperationException("Connection string 'SAPConnectionContextConnection' not found.");
 
 builder.Services.AddDbContext<SAPConnectionContext>(options => options.UseSqlServer(connectionString));
+
+
+
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<SAPConnectionContext>();
 

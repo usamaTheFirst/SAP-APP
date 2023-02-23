@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using SAPConnection.Areas.Identity.Data;
 
 namespace SAPConnection.Data;
 
 public class SAPConnectionContext : IdentityDbContext<ApplicationUser>
 {
+
     public SAPConnectionContext(DbContextOptions<SAPConnectionContext> options)
         : base(options)
     {
+
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

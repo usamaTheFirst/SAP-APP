@@ -8,7 +8,7 @@
 <input @bind="@FieldPno" type="number" class="form-control" name="pno" id="pno" placeholder="Enter PNO">
 <br />
 <div class="text-center m-2">
-    <button type="button" class="btn btn-success " @onclick="FetchDataFromSap">Fetch SAP DATA</button>
+    <button type="button" style="background-color  : #6610f2 ; color : white" class="btn " @onclick="FetchDataFromSap">Fetch SAP DATA</button>
 </div>
 
 <table class="table">
@@ -64,7 +64,7 @@
 
         connection.Connect();
         var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
-        var result = someFunction.Invoke<SomeFunctionResult>(new SomeFunctionParameters
+        var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
             {
                 Pno = FieldPno,
             });
