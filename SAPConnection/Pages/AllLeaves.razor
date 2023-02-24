@@ -1,0 +1,68 @@
+﻿@page "/all-leaves"
+@using SAPConnection.Data;
+@inject LeaveService leaveService
+@inject IJSRuntime JSRuntime
+
+<h3>All Leaves</h3>
+
+
+
+<h1>Leaves</h1>
+
+@if (leaves == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (leaves.Count == 0)
+{
+    <p><em>No leaves found.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Reason</th>
+                <th>From Date</th>
+                <th>To Date</th>
+                <th>Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var leave in leaves)
+            {
+                <tr>
+                    <td>@leave.Id</td>
+                    <td>@leave.Reason</td>
+                    <td>@leave.FromDate.ToShortDateString()</td>
+                    <td>@leave.ToDate.ToShortDateString()</td>
+                    <td>@leave.LeaveType</td>
+                    <td>
+                        <a href="@($"/leaves/{leave.Id}")">Edit</a> |
+                        <a href="#" @onclick="() => DeleteLeave(leave.Id)">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<LeaveModel> leaves;
+
+    protected override async Task OnInitializedAsync()
+    {
+        leaves = await leaveService.GetLeavesAsync();
+    }
+
+    private async Task DeleteLeave(int id)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to delete this leave request?" }))
+        {
+            await leaveService.DeleteLeaveAsync(id);
+            leaves = await leaveService.GetLeavesAsync();
+        }
+    }
+}

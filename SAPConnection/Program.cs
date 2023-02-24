@@ -23,6 +23,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<LeaveService>();
+
 builder.Services.AddBlazoredToast();
 var app = builder.Build();
 
