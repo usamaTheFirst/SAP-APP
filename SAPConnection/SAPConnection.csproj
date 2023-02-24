@@ -29,4 +29,8 @@
     <None Include="wwwroot\Images\FFBL.jpg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\MyDb\" />
+  </ItemGroup>
+
 </Project>
