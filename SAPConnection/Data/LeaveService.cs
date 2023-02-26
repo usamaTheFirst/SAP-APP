@@ -6,40 +6,45 @@ namespace SAPConnection.Data
 {
     public class LeaveService
     {
-        private readonly MyDbContext _context;
+        private readonly IDbContextFactory<MyDbContext> _contextFactory;
 
-        public LeaveService(MyDbContext context)
+        public LeaveService(IDbContextFactory<MyDbContext> contextFactory)
         {
-            _context = context;
+            _contextFactory = contextFactory;
         }
 
         public async Task<List<LeaveModel>> GetLeavesAsync()
         {
-            return await _context.leaveModel.ToListAsync();
+            using var context = _contextFactory.CreateDbContext();
+            return await context.leaveModel.ToListAsync();
         }
 
         public async Task<LeaveModel> GetLeaveAsync(int id)
         {
-            return await _context.leaveModel.FindAsync(id);
+            using var context = _contextFactory.CreateDbContext();
+            return await context.leaveModel.FindAsync(id);
         }
 
         public async Task CreateLeaveAsync(LeaveModel leave)
         {
-            _context.leaveModel.Add(leave);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.leaveModel.Add(leave);
+            await context.SaveChangesAsync();
         }
 
         public async Task UpdateLeaveAsync(LeaveModel leave)
         {
-            _context.Entry(leave).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            context.Entry(leave).State = EntityState.Modified;
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteLeaveAsync(int id)
         {
-            var leave = await _context.leaveModel.FindAsync(id);
-            _context.leaveModel.Remove(leave);
-            await _context.SaveChangesAsync();
+            using var context = _contextFactory.CreateDbContext();
+            var leave = await context.leaveModel.FindAsync(id);
+            context.leaveModel.Remove(leave);
+            await context.SaveChangesAsync();
         }
     }
 }

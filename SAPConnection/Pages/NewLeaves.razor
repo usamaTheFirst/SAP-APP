@@ -1,0 +1,68 @@
+﻿@page "/new-leave"
+@using Microsoft.EntityFrameworkCore;
+@using SAPConnection.Data;
+
+@inject LeaveService LeaveService
+@inject NavigationManager navigationManager
+
+<h1>New Leave Request</h1>
+
+@if (IsSaving)
+{
+    <p>Saving...</p>
+}
+else if (HasSaved)
+{
+    <p>Leave request saved successfully.</p>
+}
+
+<EditForm Model="@Model" OnValidSubmit="CreateLeave">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="reason">Reason:</label>
+        <InputText id="reason" class="form-control" @bind-Value="@Model.Reason" required />
+    </div>
+
+    <div class="form-group">
+        <label for="fromDate">From Date:</label>
+        <InputDate id="fromDate" class="form-control" @bind-Value="@Model.FromDate" required />
+    </div>
+
+    <div class="form-group">
+        <label for="toDate">To Date:</label>
+        <InputDate id="toDate" class="form-control" @bind-Value="@Model.ToDate" required />
+    </div>
+
+    <div class="form-group">
+        <label for="leaveType">Leave Type:</label>
+        <InputSelect id="leaveType" class="form-control" @bind-Value="@Model.LeaveType">
+            @foreach (var leaveType in LeaveTypes)
+            {
+                <option value="@leaveType">@leaveType</option>
+            }
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    private LeaveModel Model { get; set; } = new LeaveModel();
+    private bool IsSaving { get; set; }
+    private bool HasSaved { get; set; }
+
+    private IEnumerable<string> LeaveTypes = Enum.GetNames(typeof(LeaveTypeModel));
+
+    private async Task CreateLeave()
+    {
+        IsSaving = true;
+
+        await LeaveService.CreateLeaveAsync(Model);
+        navigationManager.NavigateTo("/counter");
+
+        IsSaving = false;
+        HasSaved = true;
+    }
+}

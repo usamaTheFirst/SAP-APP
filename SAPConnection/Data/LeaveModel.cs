@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SAPConnection.Data
 {
@@ -6,12 +7,13 @@ namespace SAPConnection.Data
     {
         [Key]
         public int Id { get; set; }
-        public String Reason { get; set; }
-        public DateTime RequestDate { get; set; }
-        public DateTime ToDate { get; set; }
+        public String Reason { get; set; } = "";
+        public DateTime RequestDate { get; set; } = DateTime.Now;
+        public DateTime ToDate { get; set; } = DateTime.Now;
 
-        public DateTime FromDate { get; set; }
+        public DateTime FromDate { get; set; } = DateTime.Now;
         public LeaveTypeModel LeaveType { get; set; }
+        [NotMapped]
         public byte[] Attachment { get; set; }
 
 
@@ -20,5 +22,5 @@ namespace SAPConnection.Data
 
 public enum LeaveTypeModel
 {
-    Casual,Sick, Annual
+    Casual, Sick, Annual
 }
