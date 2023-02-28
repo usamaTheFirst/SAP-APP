@@ -36,7 +36,7 @@
                 <label>Request Date : </label>
             </td>
             <td width=30%>
-                @*<span data-date-time="@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss %")"></span>*@
+                <InputDate @bind-Value="@date"  />
             </td>
             <td width=20%>
                 <label> Status : </label>
@@ -80,24 +80,6 @@
         </tr>
         <tr>
             <td>
-                <label>Leave Type : </label>
-            </td>
-            <td>
-                <select style="width:100%;" @bind="newLeave.LeaveType">
-                    <option>Casual</option>
-                    <option>Sick</option>
-                    <option>Annual</option>
-                </select>
-            </td>
-            <td>
-                <label>Leave Balance : </label>
-            </td>
-            <td>
-                <input type="text" readonly size="35" />
-            </td>
-        </tr>
-        <tr>
-            <td>
                 <label>Leave From : </label>
             </td>
             <td>
@@ -110,6 +92,26 @@
                 <input type="date" size="35" @bind-value="newLeave.ToDate" />
             </td>
         </tr>
+        <tr>
+            <td>
+                <label>Leave Type : </label>
+            </td>
+            <td>
+                <select style="width:100%;" @bind="newLeave.LeaveType">
+                    <option disabled></option>
+                    <option>Casual</option>
+                    <option>Sick</option>
+                    <option>Annual</option>
+                </select>
+            </td>
+            <td>
+                <label>Leave Balance : </label>
+            </td>
+            <td>
+                <input value="@leaveBln" type="text" readonly size="35" />
+            </td>
+        </tr>
+       
         <tr>
             <td>
                 <label>Reason For Leave : </label>
@@ -217,6 +219,8 @@
     string Department;
     string Pno;
     string Date;
+    int leaveBln;
+    DateTime date = DateTime.Now.Date;
 
     LeaveModel newLeave = new LeaveModel();
 
@@ -241,46 +245,54 @@
     protected override async Task OnInitializedAsync()
     {
 
-        //LeaveModel newLeave = new LeaveModel();
 
-        //var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
-        //using var context = new SAPConnectionContext(dbContextOptions);
-
-        //var pno = await context.Users
-        //    .Where(u => u.Id == user.Id)
-        //    .Select(u => u.Pno)
-        //    .FirstOrDefaultAsync();
-        //Pno = pno.ToString();
-        //string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
-
-        //using var connection = new SapNwRfc.SapConnection(connectionString);
-
-        //connection.Connect();
-        //var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
-        //var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
-        //    {
-        //        Pno = Pno,
-        //    });
 
         try
         {
+            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
-            //Name = result.Items[0].Name.ToString();
-            //Designation = result.Items[0].Designation.ToString();
-            //Department = result.Items[0].Department.ToString();
-            //Pno = result.Items[0].Pno.ToString();
-            //Date = DateTime.Now.Date.ToString();
-            Name = "Usama Fayyaz";
-            Designation = "Management Associates";
-            Department = "ICT";
-            Pno = "30000624";
+            using var context = new SAPConnectionContext(dbContextOptions);
+
+            var pno = await context.Users
+                .Where(u => u.Id == user.Id)
+                .Select(u => u.Pno)
+                .FirstOrDefaultAsync();
+            Pno = pno.ToString();
+            string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+
+            using var connection = new SapNwRfc.SapConnection(connectionString);
+
+            connection.Connect();
+            var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+            var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
+                {
+                    Pno = Pno,
+                });
+            var LeaveBalanceFunction = connection.CreateFunction("ZRFC_LEAVE_BAL");
+            var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+                {
+                    Pno = Pno,
+                });
+
+            Name = result.Items[0].Name.ToString();
+            Designation = result.Items[0].Designation.ToString();
+            Department = result.Items[0].Department.ToString();
+            Pno = result.Items[0].Pno.ToString();
             Date = DateTime.Now.Date.ToString();
+            leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+
+            //Name = "Usama Fayyaz";
+            //Designation = "Management Associates";
+            //Department = "ICT";
+            //Pno = "30000624";
+            //Date = DateTime.Now.Date.ToString();
 
         }
         catch (Exception e)
         {
-            toastService.ShowError("No Record exists against the entered P.Number.");
+            toastService.ShowError("We Ran into some error. Try logging in again");
+
         }
 
 
@@ -289,5 +301,27 @@
 
     }
 
+
+
+
+    private async Task fetchleaveBln()
+    {
+
+        if(newLeave.LeaveType != null && newLeave.ToDate !=null && newLeave.FromDate != null)
+        {
+            if(newLeave.FromDate > newLeave.FromDate)
+            {
+                toastService.ShowError("FromDate cant be greater than ToDate");
+
+            }
+            else
+            {
+                
+            }
+        }
+        {
+            
+        }
+    }
 
 }
