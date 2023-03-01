@@ -97,11 +97,10 @@
                 <label>Leave Type : </label>
             </td>
             <td>
-                <select style="width:100%;" @bind="newLeave.LeaveType">
-                    <option disabled></option>
-                    <option>Casual</option>
-                    <option>Sick</option>
-                    <option>Annual</option>
+                <select @onclick="@fetchleaveBln"  style="width:100%;" @bind="newLeave.LeaveType">
+                    <option >Casual</option>
+                    <option >Sick</option>
+                    <option >Annual</option>
                 </select>
             </td>
             <td>
@@ -270,8 +269,8 @@
                     Pno = Pno,
                 });
 
-                //connection.Disconnect();
-                //connection.Dispose();
+            //connection.Disconnect();
+            //connection.Dispose();
 
 
             string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
@@ -289,7 +288,7 @@
 
                 });
 
-           
+
 
             Name = result.Items[0].Name.ToString();
             Designation = result.Items[0].Designation.ToString();
@@ -320,23 +319,42 @@
 
 
 
-    private async Task fetchleaveBln()
+    private async Task fetchleaveBln( )
     {
+       
+        int temp = (Int32) newLeave.LeaveType;
+        //toastService.ShowError(temp.ToString());
 
-        if(newLeave.LeaveType != null && newLeave.ToDate !=null && newLeave.FromDate != null)
-        {
-            if(newLeave.FromDate > newLeave.FromDate)
-            {
-                toastService.ShowError("FromDate cant be greater than ToDate");
 
-            }
-            else
-            {
-                
-            }
-        }
+
+       try
         {
+           
             
+                string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
+
+                using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+
+                DevConnection.Connect();
+                var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+                var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+                    {
+                        Pno = Pno,
+                    FromDate = "20210430",
+                    ToDate = "20210430",
+                        LeaveType = temp.ToString()
+
+                    });
+                leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+
+
+                
+            
+        }
+        catch(Exception e)
+        {
+            toastService.ShowError("We Ran into some error. Try logging in again");
+
         }
     }
 

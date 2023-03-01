@@ -22,5 +22,5 @@ namespace SAPConnection.Data
 
 public enum LeaveTypeModel
 {
-    Casual, Sick, Annual
+    Casual =3000, Sick =4000, Annual=1000
 }
