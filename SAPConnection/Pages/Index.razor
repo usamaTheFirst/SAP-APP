@@ -40,18 +40,19 @@ Welcome to your new app.
     {
         toastService.ShowInfo("I'm an INFO message");
 
-        string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+        //string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+        string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
 
-        using var connection = new SapNwRfc.SapConnection(connectionString);
+        using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
 
-        connection.Connect();
-        var someFunction = connection.CreateFunction("ZRFC_LEAVE_BAL");
+        DevConnection.Connect();
+        var someFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
         var result = someFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
             {
-                Pno = "00000687",
+                Pno = "00000810",
                 FromDate = "20210430",
                 ToDate = "20210430",
-                LeaveType = "1000"
+                LeaveType = "4000"
 
             });
 

@@ -269,11 +269,27 @@
                 {
                     Pno = Pno,
                 });
-            var LeaveBalanceFunction = connection.CreateFunction("ZRFC_LEAVE_BAL");
+
+                //connection.Disconnect();
+                //connection.Dispose();
+
+
+            string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
+
+            using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+
+            DevConnection.Connect();
+            var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
             var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
                 {
                     Pno = Pno,
+                    FromDate = "20210430",
+                    ToDate = "20210430",
+                    LeaveType = "4000"
+
                 });
+
+           
 
             Name = result.Items[0].Name.ToString();
             Designation = result.Items[0].Designation.ToString();
