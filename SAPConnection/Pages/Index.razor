@@ -38,7 +38,7 @@ Welcome to your new app.
 
     async Task test()
     {
-        toastService.ShowInfo("I'm an INFO message");
+        toastService.ShowInfo(DateTime.Now.Date.ToString("yyyyMMdd"));
 
         //string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
         string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
@@ -49,10 +49,12 @@ Welcome to your new app.
         var someFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
         var result = someFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
             {
-                Pno = "00000810",
-                FromDate = "20210430",
-                ToDate = "20210430",
-                LeaveType = "4000"
+                Pno = "00000687",
+                //FromDate = DateTime.Now.Date.ToString("dd.MM.yyyy"),
+                //ToDate = DateTime.Now.Date.ToString("dd.MM.yyyy"),
+                FromDate = DateTime.Now.Date.ToString("yyyyMMdd"),
+                ToDate = DateTime.Now.Date.ToString("yyyyMMdd"),
+                LeaveType = "1000"
 
             });
 

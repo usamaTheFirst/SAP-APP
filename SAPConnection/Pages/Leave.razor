@@ -340,8 +340,8 @@
                 var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
                     {
                         Pno = Pno,
-                    FromDate = "20210430",
-                    ToDate = "20210430",
+                    FromDate = newLeave.FromDate.Date.ToString("yyyyMMdd"),
+                    ToDate = newLeave.ToDate.Date.ToString("yyyyMMdd"),
                         LeaveType = temp.ToString()
 
                     });
