@@ -9,11 +9,21 @@
 @using SAPConnection.Data;
 @inject IHttpContextAccessor httpContextAccessor
 
+
 @inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor httpContextAccessor
 @inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
 
+   @inject IJSRuntime JSRuntime
 
+
+
+ <NotAuthorized>
+    @{
+        <RedirectTo ></RedirectTo>
+          
+    }
+</NotAuthorized>
 
 <PageTitle>Index</PageTitle>
 
