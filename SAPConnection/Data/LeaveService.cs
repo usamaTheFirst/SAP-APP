@@ -1,6 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
+
 
 namespace SAPConnection.Data
 {
@@ -13,10 +19,17 @@ namespace SAPConnection.Data
             _contextFactory = contextFactory;
         }
 
-        public async Task<List<LeaveModel>> GetLeavesAsync()
+        public async Task<List<LeaveModel>> GetLeavesAsync(string pno)
         {
+           
             using var context = _contextFactory.CreateDbContext();
-            return await context.leaveModel.ToListAsync();
+            var query = context.leaveModel.AsQueryable();
+            if (!string.IsNullOrEmpty(pno))
+            {
+                query = query.Where(x => x.LeaveOwnerPno.Contains(pno));
+            }
+            return await query.ToListAsync();
+
         }
 
         public async Task<LeaveModel> GetLeaveAsync(int id)

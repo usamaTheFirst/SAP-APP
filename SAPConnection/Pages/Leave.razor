@@ -225,6 +225,7 @@
 
     private async Task submitLeaves()
     {
+        newLeave.LeaveOwnerPno = Pno;
 
 
         await leaveService.CreateLeaveAsync(newLeave);

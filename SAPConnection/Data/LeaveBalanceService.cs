@@ -20,5 +20,12 @@ namespace SAPConnection.Data
     {
         [SapName("BAL")]
         public string Bal { get; set; }
+
+
+        [SapName("CALC_DAYS")]
+        public string TotalDays { get; set; }
+
+
+        
     }
 }
