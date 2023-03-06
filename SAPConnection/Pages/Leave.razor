@@ -103,11 +103,24 @@
                     <option >Annual</option>
                 </select>
             </td>
+           <td colspan="2">
+        <tr>
             <td>
                 <label>Leave Balance : </label>
             </td>
             <td>
-                <input value="@leaveBln" type="text" readonly size="35" />
+                        @*<input value="@leaveBln" type="text" readonly size="35" />*@
+                <label>@leaveBln</label>
+
+            </td>
+            <td>
+                <label>Total Days : </label>
+            </td>
+            <td>
+                        @*<input value="@TotalDays" type="text" readonly size="35" />*@
+                <label>@TotalDays</label>
+            </td>
+        </tr>
             </td>
         </tr>
        
@@ -219,6 +232,8 @@
     string Pno;
     string Date;
     int leaveBln;
+    int TotalDays;
+
     DateTime date = DateTime.Now.Date;
 
     LeaveModel newLeave = new LeaveModel();
@@ -297,6 +312,8 @@
             Pno = result.Items[0].Pno.ToString();
             Date = DateTime.Now.Date.ToString();
             leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+
 
             //Name = "Usama Fayyaz";
             //Designation = "Management Associates";
@@ -347,6 +364,8 @@
 
                     });
                 leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+
 
 
                 
