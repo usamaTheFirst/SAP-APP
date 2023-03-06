@@ -12,6 +12,18 @@
 @inject IHttpContextAccessor httpContextAccessor
 @inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
 
+<CascadingAuthenticationState>
+    <AuthorizeView>
+
+        <NotAuthorized>
+            @{
+                <RedirectTo></RedirectTo>
+
+            }
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
 
 <h3>All Leaves</h3>
 

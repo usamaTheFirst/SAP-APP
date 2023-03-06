@@ -3,12 +3,17 @@
 
 
 
- <NotAuthorized>
-    @{
-        <RedirectTo ></RedirectTo>
-          
-    }
-</NotAuthorized>
+<CascadingAuthenticationState>
+    <AuthorizeView>
+
+        <NotAuthorized>
+            @{
+                <RedirectTo></RedirectTo>
+
+            }
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
 
 
 <div class="text-center" style=" width : 100%;">

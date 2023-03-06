@@ -18,12 +18,26 @@
 
 
 
- <NotAuthorized>
+<CascadingAuthenticationState>
+    <AuthorizeView>
+      
+        <NotAuthorized>
+            @{
+                <RedirectTo></RedirectTo>
+
+            }
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+ @*<NotAuthorized>
     @{
         <RedirectTo ></RedirectTo>
           
     }
-</NotAuthorized>
+</NotAuthorized>*@
 
 <PageTitle>Index</PageTitle>
 
