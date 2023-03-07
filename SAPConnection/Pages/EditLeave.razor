@@ -1,0 +1,69 @@
+﻿@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
+@using SAPConnection.Areas.Identity.Data;
+@using SAPConnection.Data;
+@inject LeaveService leaveService
+@inject NavigationManager NavigationManager
+@inject IHttpContextAccessor httpContextAccessor
+
+
+
+<h3>Edit Leave</h3>
+
+@if (leave == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <form>
+        <div class="form-group">
+            <label for="reason">Reason</label>
+            <input class="form-control" type="text" id="reason" @bind-value="@leave.Reason" />
+        </div>
+        <div class="form-group">
+            <label for="from-date">From Date</label>
+            <InputDate class="form-control" id="from-date" @bind-Value="@leave.FromDate" />
+        </div>
+        <div class="form-group">
+            <label for="to-date">To Date</label>
+            <InputDate class="form-control" id="to-date" @bind-Value="@leave.ToDate" />
+        </div>
+        <div class="form-group">
+            <label for="leave-type">Leave Type</label>
+            <select class="form-control" id="leave-type" @bind="@leave.LeaveType">
+                <option value="Annual">Annual</option>
+                <option value="Sick">Sick</option>
+                <option value="Unpaid">Unpaid</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Save Changes</button>
+    </form>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    LeaveModel leave;
+
+    [Inject]
+    private LeaveService LeaveService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        int leaveId;
+
+        if (int.TryParse(id, out leaveId))
+        {
+            leave = await LeaveService.GetLeaveAsync(leaveId);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await LeaveService.UpdateLeaveAsync(leave);
+        NavigationManager.NavigateTo("/leavelist");
+    }
+}
