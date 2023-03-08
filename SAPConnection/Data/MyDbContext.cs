@@ -9,5 +9,8 @@ namespace SAPConnection.Data
         }
 
         public DbSet<LeaveModel> leaveModel { get; set; }
+
+        public DbSet<ApproversModel> Approvers { get; set; }
+
     }
 }

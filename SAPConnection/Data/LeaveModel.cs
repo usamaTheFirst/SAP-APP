@@ -13,6 +13,7 @@ namespace SAPConnection.Data
 
         public DateTime FromDate { get; set; } = DateTime.Now;
         public LeaveTypeModel LeaveType { get; set; }
+        public ApproversModel RouteId { get; set; }
         public String LeaveOwnerPno { get; set; }
         [NotMapped]
         public byte[] Attachment { get; set; }

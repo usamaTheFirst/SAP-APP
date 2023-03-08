@@ -12,8 +12,8 @@ using SAPConnection.Data;
 namespace SAPConnection.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230302070415_pnoAddedToLeaveModel")]
-    partial class pnoAddedToLeaveModel
+    [Migration("20230308081220_abc")]
+    partial class abc
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,34 @@ namespace SAPConnection.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("SAPConnection.Data.ApproversModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DepartmentHeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SectionHeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitManagerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Approvers");
+                });
 
             modelBuilder.Entity("SAPConnection.Data.LeaveModel", b =>
                 {
@@ -50,12 +78,28 @@ namespace SAPConnection.Migrations
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("RouteIdId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ToDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RouteIdId");
+
                     b.ToTable("leaveModel");
+                });
+
+            modelBuilder.Entity("SAPConnection.Data.LeaveModel", b =>
+                {
+                    b.HasOne("SAPConnection.Data.ApproversModel", "RouteId")
+                        .WithMany()
+                        .HasForeignKey("RouteIdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RouteId");
                 });
 #pragma warning restore 612, 618
         }

@@ -85,6 +85,40 @@ namespace SAPConnection.Areas.Identity.Pages.Account
             [Display(Name = "Pno")]
             public int Pno { get; set; }
 
+
+            [Required]
+            [Display(Name = "Name")]
+            public String Name { get; set; }
+
+            [Required]
+            [Display(Name = "Designation")]
+            public String Designation { get; set; }
+
+
+            [Required]
+            [Display(Name = "Location")]
+            public int Location { get; set; }
+
+            [Required]
+            [Display(Name = "Department Id")]
+            public int DepartmentId { get; set; }
+
+
+            [Required]
+            [Display(Name = "Section Id")]
+            public int SectionId { get; set; }
+
+
+            [Required]
+            [Display(Name = "Designation Id")]
+            public int DesignationId { get; set; }
+
+
+
+
+
+
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -120,6 +154,12 @@ namespace SAPConnection.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
                 user.Pno = Input.Pno;
+                user.Name = Input.Name;
+                user.Designation = Input.Designation;
+                user.Location = Input.Location;
+                user.DepartmentId = Input.DepartmentId;
+                user.SectionId = Input.SectionId;
+                user.DesignationId = Input.DesignationId;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

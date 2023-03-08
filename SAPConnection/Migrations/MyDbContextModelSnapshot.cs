@@ -22,6 +22,34 @@ namespace SAPConnection.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("SAPConnection.Data.ApproversModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DepartmentHeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SectionHeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitManagerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Approvers");
+                });
+
             modelBuilder.Entity("SAPConnection.Data.LeaveModel", b =>
                 {
                     b.Property<int>("Id")
@@ -47,12 +75,28 @@ namespace SAPConnection.Migrations
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("RouteIdId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ToDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RouteIdId");
+
                     b.ToTable("leaveModel");
+                });
+
+            modelBuilder.Entity("SAPConnection.Data.LeaveModel", b =>
+                {
+                    b.HasOne("SAPConnection.Data.ApproversModel", "RouteId")
+                        .WithMany()
+                        .HasForeignKey("RouteIdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RouteId");
                 });
 #pragma warning restore 612, 618
         }

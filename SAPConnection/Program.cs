@@ -20,6 +20,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<LeaveService>();
+builder.Services.AddScoped<ApproversService>();
+
 
 builder.Services.AddBlazoredToast();
 var app = builder.Build();
