@@ -17,6 +17,8 @@
 @inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor httpContextAccessor
 @inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
+@inject MyDbContext _context
+
 
 
 
@@ -239,11 +241,46 @@
 
     private async Task submitLeaves()
     {
-        newLeave.LeaveOwnerPno = Pno;
+        try
+        {
+
+            int deptId,sectId;
+
+            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+            using var context = new SAPConnectionContext(dbContextOptions);
+
+            var dept = await context.Users
+                .Where(u => u.Id == user.Id)
+                .Select(u => u.DepartmentId)
+                .FirstOrDefaultAsync();
+            deptId = dept;
 
 
-        await leaveService.CreateLeaveAsync(newLeave);
-        NavigationManager.NavigateTo("all-leaves");
+            var sect = await context.Users
+               .Where(u => u.Id == user.Id)
+               .Select(u => u.SectionId)
+               .FirstOrDefaultAsync();
+            sectId = sect;
+
+            ApproversModel approvers = await _context.Approvers
+        .Where(a => a.SectionId == sectId && a.DepartmentId == deptId).FirstOrDefaultAsync();
+
+
+            toastService.ShowError(approvers.Id.ToString());
+
+            newLeave.LeaveOwnerPno = Pno;
+            newLeave.RouteId = approvers.Id;
+            await leaveService.CreateLeaveAsync(newLeave);
+            NavigationManager.NavigateTo("all-leaves");
+
+
+
+        }catch(Exception e)
+        {
+            
+        }
+
 
 
     }
