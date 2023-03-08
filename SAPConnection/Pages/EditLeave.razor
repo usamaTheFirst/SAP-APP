@@ -1,4 +1,6 @@
-﻿@inject NavigationManager NavigationManager
+﻿@page "/leaves/{id:int}"
+
+@inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Identity;
 @using Microsoft.EntityFrameworkCore;
 @using SAPConnection.Areas.Identity.Data;
@@ -44,7 +46,7 @@ else
 
 @code {
     [Parameter]
-    public string id { get; set; }
+    public int id { get; set; }
 
     LeaveModel leave;
 
@@ -55,7 +57,7 @@ else
     {
         int leaveId;
 
-        if (int.TryParse(id, out leaveId))
+        if (int.TryParse(id.ToString(), out leaveId))
         {
             leave = await LeaveService.GetLeaveAsync(leaveId);
         }
