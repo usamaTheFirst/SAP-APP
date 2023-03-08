@@ -18,6 +18,9 @@ namespace SAPConnection.Data
         [NotMapped]
         public byte[] Attachment { get; set; }
 
+        public SubmissionStatus submissionStatus { get; set; } = SubmissionStatus.Draft;
+        public ApprovalStatus approvalStatus { get; set; } = ApprovalStatus.New;
+
 
     }
 }
@@ -25,4 +28,14 @@ namespace SAPConnection.Data
 public enum LeaveTypeModel
 {
     Casual =3000, Sick =4000, Annual=1000
+}
+
+public enum SubmissionStatus
+{
+    Draft , Submitted
+}
+
+public enum ApprovalStatus
+{
+    New, Pending, Review, Approved,Rejected
 }

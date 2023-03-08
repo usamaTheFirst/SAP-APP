@@ -84,13 +84,13 @@
                 <label>Leave From : </label>
             </td>
             <td>
-                <input type="date" size="35" @bind-value="newLeave.FromDate" />
+                <input  type="date" size="35" @bind-value="newLeave.FromDate" />
             </td>
             <td>
                 <label>Leave To : </label>
             </td>
             <td>
-                <input type="date" size="35" @bind-value="newLeave.ToDate" />
+                <input  type="date" size="35" @bind-value="newLeave.ToDate" />
             </td>
         </tr>
         <tr>
@@ -141,17 +141,38 @@
                 @*<input name = "attachment" type="file" multiple/>*@
             </td>
         </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+      @*  <tr>
+            
             <td>
 
+                <button style="background-color:#000080; color:white; font-size:large; border-radius:5px;  float:right;" @onclick="submitLeaves" type="submit" @onclick:preventDefault >Save as Draft</button>
+
+
+            </td>
+            <td>
 
                 <input style="background-color:#000080; color:white; font-size:large; border-radius:5px; width:50%; float:right;" @onclick="submitLeaves" type="submit" @onclick:preventDefault />
             </td>
-        </tr>
+        </tr>*@
+
+
     </table>
+
+    <div style="display : flex; align-items: end ; justify-content : end ; width : 100% ; padding : 5px;">
+
+
+        <button style="width : 25%; height : 40px ; color : white; background-color : dodgerblue ; border : 1px solid #dodgerblue; border-radius : 5px" @onclick="SaveAsDraft" type="submit" @onclick:preventDefault>
+
+            Save as Draft
+        </button>
+
+        &nbsp;
+
+        <button style="width : 25%; height : 40px ; color : white; background-color : #000080 ; border : 1px solid #000080; border-radius : 5px" @onclick="submitLeaves" type="submit" @onclick:preventDefault>
+            Submit
+        </button>
+
+    </div>
 
     <div>
         <div style="width:10px;">
@@ -239,8 +260,14 @@
 
     LeaveModel newLeave = new LeaveModel();
 
+
+
+
+
+
     private async Task submitLeaves()
     {
+
         try
         {
 
@@ -271,6 +298,8 @@
 
             newLeave.LeaveOwnerPno = Pno;
             newLeave.RouteId = approvers.Id;
+            newLeave.approvalStatus = ApprovalStatus.Pending;
+            newLeave.submissionStatus = SubmissionStatus.Submitted;
             await leaveService.CreateLeaveAsync(newLeave);
             NavigationManager.NavigateTo("all-leaves");
 
@@ -278,12 +307,63 @@
 
         }catch(Exception e)
         {
-            
+
         }
 
 
 
     }
+
+    private async Task SaveAsDraft()
+    {
+
+        try
+        {
+
+            int deptId, sectId;
+
+            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+            using var context = new SAPConnectionContext(dbContextOptions);
+
+            var dept = await context.Users
+                .Where(u => u.Id == user.Id)
+                .Select(u => u.DepartmentId)
+                .FirstOrDefaultAsync();
+            deptId = dept;
+
+
+            var sect = await context.Users
+               .Where(u => u.Id == user.Id)
+               .Select(u => u.SectionId)
+               .FirstOrDefaultAsync();
+            sectId = sect;
+
+            ApproversModel approvers = await _context.Approvers
+        .Where(a => a.SectionId == sectId && a.DepartmentId == deptId).FirstOrDefaultAsync();
+
+
+            toastService.ShowError(approvers.Id.ToString());
+
+            newLeave.LeaveOwnerPno = Pno;
+            newLeave.RouteId = approvers.Id;
+            newLeave.approvalStatus = ApprovalStatus.New;
+            newLeave.submissionStatus = SubmissionStatus.Draft;
+            await leaveService.CreateLeaveAsync(newLeave);
+            NavigationManager.NavigateTo("all-leaves");
+
+
+
+        }
+        catch (Exception e)
+        {
+
+        }
+
+
+
+    }
+
 
 
     private void Show()
@@ -301,6 +381,8 @@
 
         try
         {
+
+ 
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
             using var context = new SAPConnectionContext(dbContextOptions);

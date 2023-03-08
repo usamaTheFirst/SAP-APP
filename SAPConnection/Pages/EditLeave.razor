@@ -141,7 +141,7 @@ else
                     @*<input name = "attachment" type="file" multiple/>*@
                 </td>
             </tr>
-            <tr>
+           @* <tr>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -150,8 +150,24 @@ else
 
                     <input style="background-color:#000080; color:white; font-size:large; border-radius:5px; width:50%; float:right;" @onclick="HandleValidSubmit" type="submit" @onclick:preventDefault />
                 </td>
-            </tr>
+            </tr>*@
         </table>
+        <div style="display : flex; align-items: end ; justify-content : end ; width : 100% ; padding : 5px;">
+
+
+            <button style="width : 25%; height : 40px ; color : white; background-color : dodgerblue ; border : 1px solid #dodgerblue; border-radius : 5px" @onclick="saveAsDraft" type="submit" @onclick:preventDefault>
+
+                Save as Draft
+            </button>
+
+            &nbsp;
+
+            <button style="width : 25%; height : 40px ; color : white; background-color : #000080 ; border : 1px solid #000080; border-radius : 5px" @onclick="submit" type="submit" @onclick:preventDefault>
+                Submit
+            </button>
+
+        </div>
+
 
         <div>
             <div style="width:10px;">
@@ -217,6 +233,22 @@ else
                                 </td>
                             </tr>
                         </table>
+                        <div style="display : flex; align-items: end ; justify-content : end ; width : 100% ; padding : 5px;">
+
+
+                            <button style="width : 25%; height : 40px ; color : white; background-color : dodgerblue ; border : 1px solid #dodgerblue; border-radius : 5px" @onclick="saveAsDraft" type="submit" @onclick:preventDefault>
+
+                                Save as Draft
+                            </button>
+
+                            &nbsp;
+
+                            <button style="width : 25%; height : 40px ; color : white; background-color : #000080 ; border : 1px solid #000080; border-radius : 5px" @onclick="submit" type="submit" @onclick:preventDefault>
+                                Submit
+                            </button>
+
+                        </div>
+
                     </div>
                 </td>
             </tr>
@@ -323,9 +355,22 @@ else
 
     }
 
-    private async Task HandleValidSubmit()
+    private async Task submit()
+
     {
+        leave.approvalStatus = ApprovalStatus.Pending;
+        leave.submissionStatus = SubmissionStatus.Submitted;
         toastService.ShowSuccess("Updated Successfully"); 
+
+        await LeaveService.UpdateLeaveAsync(leave);
+        NavigationManager.NavigateTo("/all-leaves");
+    }
+
+    private async Task saveAsDraft()
+    {
+        leave.approvalStatus = ApprovalStatus.New;
+        leave.submissionStatus = SubmissionStatus.Draft;
+        toastService.ShowSuccess("Updated Successfully");
 
         await LeaveService.UpdateLeaveAsync(leave);
         NavigationManager.NavigateTo("/all-leaves");
