@@ -8,6 +8,8 @@
 @inject IHttpContextAccessor httpContextAccessor
 @inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
 @inject WorkFlowService WorkFlowService
+@inject NavigationManager NavigationManager
+
 
 
 <form >
@@ -27,7 +29,7 @@
     </div>
         <div class="mb-3">
             <label>No. of Stages</label>
-            <input @bind-value="@numberOfStages" type="number" class="form-control" />
+            <input value="@numberOfStages" type="number" class="form-control" @onchange="HandleChange" />
         </div>
         <div class="mb-3">
             <label>Subtype</label>
@@ -40,14 +42,7 @@
      
         @if(numberOfStages >0)
         {
-            workflowItems = new List<WorkflowItem>();
-            for (int i = 1; i <= numberOfStages; i++)
-            {
-                WorkflowItem item = new WorkflowItem();
-                item.Level = i;
-
-                workflowItems.Add(item);
-            }
+            @*addItemsToList(numberOfStages);*@
             <table  class="table">
                 <thead>
                     <tr>
@@ -104,7 +99,8 @@
     int Location;
     int subtype;
 
-    List<WorkflowItem> workflowItems ;
+    List<WorkflowItem>  workflowItems = new List<WorkflowItem>();
+
     WorkflowItem t = new WorkflowItem();
 
     protected override async Task OnInitializedAsync()
@@ -143,7 +139,31 @@
             await WorkFlowService.CreateWorkFlow(item);
 
         }
+        NavigationManager.NavigateTo("all-leaves");
 
+
+    }
+
+    private void addItemsToList()
+    {
+        clearItems();
+        for (int i = 1; i <= numberOfStages; i++)
+        {
+            WorkflowItem item = new WorkflowItem();
+            item.Level = i;
+
+            workflowItems.Add(item);
+        }
+    }
+    private void clearItems()
+    {
+        workflowItems.Clear();
+    }
+
+    private void HandleChange(ChangeEventArgs e)
+    {
+        numberOfStages = Int32.Parse(e.Value.ToString());
+        addItemsToList();
     }
 
 }
