@@ -2,8 +2,6 @@
 @using SAPConnection.Data
 @inject LeaveService leaveService
 @inject NavigationManager NavigationManager
-
-
 @inject IToastService toastService
 @inject AuthenticationStateProvider AuthNStateProvider
 @using Microsoft.AspNetCore.Http
@@ -11,9 +9,7 @@
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Options;
 @using SAPConnection.Areas.Identity.Data;
-@using SAPConnection.Data;
 @inject IHttpContextAccessor httpContextAccessor
-
 @inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor httpContextAccessor
 @inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
@@ -22,58 +18,80 @@
 
 
 
+<link rel="stylesheet" href="~/css/site.css" />
 
 
-<center><h1 style="font-family:Georgia; font-size:x-large;">Leave Application Form</h1></center>
+<div style="display : flex; align-items: end ; justify-content : center ; width : 100% ;border : 2px solid #000080 ; padding : 5px;">
+    <img src="/Images/FFBL.jpg" height="80" width="230" style="display : inline;" />
+</div>
+<br />
 <form>
-    <table cellpadding="14" width=100%>
-        <tr style="background-color: #000080; color: white; font-weight:500; font-size:larger">
+    <table style="width : 100% ; padding-left : 10px ; padding-right : 10px" border="1" cellpadding="10">
+        <tr style="background-color: #000080 ; width : 100%">
             <td colspan="4">
-                <label>Employee Details</label>
-            </td>
-        </tr>
-        <tr width=100%>
-            <td width=20%>
-                <label>Request Date : </label>
-            </td>
-            <td width=30%>
-                <InputDate @bind-Value="@date"  />
-            </td>
-            <td width=20%>
-                <label> Status : </label>
-            </td>
-            <td width=30%>
-                <input type="text" readonly value="Draft" size="35" />
+                <h5 style="color : white">Employee Details</h5>
             </td>
         </tr>
         <tr>
-            <td>
-                <label>Employee Name : </label>
+            <td style="text-align : left">
+                <p style="font-weight : bold">Request Date:</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Name" size="35" />
+            <td style="text-align : left">
+                <InputDate  @bind-Value="@date" />
             </td>
-            <td>
-                <label>Employee Number : </label>
+
+
+            <td style="text-align : left">
+                <p style="font-weight : bold ">Status</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Pno" size="35" />
+            <td style="text-align : left">
+                <p>New</p>
             </td>
         </tr>
+
+
+
         <tr>
-            <td>
-                <label>Department : </label>
+            <td style="text-align : left">
+                <p style="font-weight : bold">Employee Name:</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Department" size="35" />
+            <td style="text-align : left">
+                <p>@Name</p>
             </td>
-            <td>
-                <label>Designation : </label>
+
+
+            <td style="text-align : left">
+                <p style="font-weight : bold">Employee Number</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Designation" size="35" />
+            <td style="text-align : left">
+                <p>@Pno</p>
             </td>
         </tr>
+
+
+        <tr>
+            <td style="text-align : left">
+                <p style="font-weight : bold">Department</p>
+            </td>
+            <td style="text-align : left">
+                <p>@Department</p>
+            </td>
+
+
+            <td style="text-align : left">
+                <p style="font-weight : bold">Designation</p>
+            </td>
+            <td style="text-align : left">
+                <p>@Designation</p>
+            </td>
+        </tr>
+
+    </table>
+    <br />
+
+    <table cellpadding="14" width=100%>
+       
+     
         <tr style="background-color: #000080; color: white; font-weight:500; font-size:larger">
             <td colspan="4">
                 <label>Leave Details</label>
@@ -81,47 +99,49 @@
         </tr>
         <tr>
             <td>
-                <label>Leave From : </label>
+                <p style="font-weight : bold">Leave From</p>
             </td>
             <td>
                 <input  type="date" size="35" @bind-value="newLeave.FromDate" />
             </td>
             <td>
-                <label>Leave To : </label>
+                <p style="font-weight : bold">Leave To</p>
             </td>
             <td>
-                <input  type="date" size="35" @bind-value="newLeave.ToDate" />
+                <input  type="date"  @bind-value="newLeave.ToDate" />
             </td>
+
         </tr>
         <tr>
             <td>
-                <label>Leave Type : </label>
+                <p style="font-weight : bold">Leave Type</p>
             </td>
             <td>
-                <select @onclick="@fetchleaveBln"  style="width:100%;" @bind="newLeave.LeaveType">
+                <select class="form-select border border-dark" @onclick="@fetchleaveBln" style="width:100%;" @bind="newLeave.LeaveType">
                     <option >Casual</option>
                     <option >Sick</option>
                     <option >Annual</option>
                 </select>
             </td>
            <td colspan="2">
-        <tr>
+        @*<tr>*@
             <td>
-                <label>Leave Balance : </label>
+                <p style="font-weight : bold">Leave Balance</p>
             </td>
             <td>
                         @*<input value="@leaveBln" type="text" readonly size="35" />*@
-                <label>@leaveBln</label>
+                <p style="font-weight : bold">@leaveBln</p>
 
             </td>
             <td>
-                <label>Total Days : </label>
+                <p style="font-weight : bold">Total Balance</p>
             </td>
+           
             <td>
                         @*<input value="@TotalDays" type="text" readonly size="35" />*@
-                <label>@TotalDays</label>
+                <p style="font-weight : bold">@TotalDays</p>
             </td>
-        </tr>
+        @*</tr>*@
             </td>
         </tr>
        
@@ -130,7 +150,7 @@
                 <label>Reason For Leave : </label>
             </td>
             <td colspan="3">
-                <textarea style="width:100%" @bind="newLeave.Reason" required></textarea>
+                <textarea class="border border-dark" style="width:100%" @bind="newLeave.Reason" required></textarea>
             </td>
         </tr>
         <tr>
@@ -157,6 +177,9 @@
 
 
     </table>
+
+
+
 
     <div style="display : flex; align-items: end ; justify-content : end ; width : 100% ; padding : 5px;">
 
@@ -343,7 +366,6 @@
         .Where(a => a.SectionId == sectId && a.DepartmentId == deptId).FirstOrDefaultAsync();
 
 
-            toastService.ShowError(approvers.Id.ToString());
 
             newLeave.LeaveOwnerPno = Pno;
             newLeave.RouteId = approvers.Id;
@@ -375,18 +397,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-
-
-
         try
         {
-
- 
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
-
             using var context = new SAPConnectionContext(dbContextOptions);
-
             var pno = await context.Users
                 .Where(u => u.Id == user.Id)
                 .Select(u => u.Pno)
@@ -445,10 +459,6 @@
             toastService.ShowError("We Ran into some error. Try logging in again");
 
         }
-
-
-
-
 
     }
 
