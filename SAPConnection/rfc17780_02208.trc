@@ -1,5 +1,5 @@
 
-**** Trace file opened at 2023-03-09 08:52:11.141400 UTC+05:00 (Pakistan Standard Time), Encoding UTF-8
+**** Trace file opened at 2023-03-09 09:06:18.449308 UTC+05:00 (Pakistan Standard Time), Encoding UTF-8
 NW RFC Library: SDK variant, Release 750 Patch Level 11
 Compilation date          : Jan 14 2023 01:04:49
 CPIC library              : 753.2022.12.23 version 3
@@ -46,9 +46,9 @@ Global trace level        : 0
 	Delta Manager: 1
 << RfcOptions
 
-2023-03-09 08:52:11.141840 [08412] 	>> RfcOptions::determineType
+2023-03-09 09:06:18.449684 [02208] 	>> RfcOptions::determineType
 determined type RFC_CLIENT
-2023-03-09 08:52:11.141917 [08412] 	<< RfcOptions::determineType returned 0
+2023-03-09 09:06:18.449725 [02208] 	<< RfcOptions::determineType returned 0
 
 >> Passed parameters
 	ASHOST: sapdev.ffbl.com
@@ -81,77 +81,7 @@ determined type RFC_CLIENT
 	Delta Manager: 1
 << RfcOptions
 
-2023-03-09 08:52:12.330145 [08412] 	>> RfcOptions::determineType
+2023-03-09 09:06:18.622363 [02208] 	>> RfcOptions::determineType
 determined type RFC_CLIENT
-2023-03-09 08:52:12.330216 [08412] 	<< RfcOptions::determineType returned 0
-
->> Passed parameters
-	ASHOST: 10.1.25.168
-	CLIENT: 300
-	LANG: EN
-	PASSWD: (- secret -)
-	POOL_SIZE: 5
-	SYSNR: 00
-	TRACE: 8
-	USER: abapdev
-<< Passed parameters
-
-
->> RfcOptions
-	Partner Char Size: 1
-	Client: 300
-	User: abapdev
-	Passwd: (- secret -)
-	Language: E
-	SysNr: 00
-	ASHost: 10.1.25.168
-	Codepage: 1100
-	Trace: 32767
-	LogonCheck: 1
-	CompressionType: 1
-	Serialization: 0
-	Ignore Char Conv Errors: 0
-	Substitution Char: 35
-	UseRoundtripOptimization: Off
-	Delta Manager: 1
-<< RfcOptions
-
-2023-03-09 08:52:23.567533 [08412] 	>> RfcOptions::determineType
-determined type RFC_CLIENT
-2023-03-09 08:52:23.567622 [08412] 	<< RfcOptions::determineType returned 0
-
->> Passed parameters
-	ASHOST: sapdev.ffbl.com
-	CLIENT: 110
-	LANG: EN
-	PASSWD: (- secret -)
-	POOL_SIZE: 5
-	SYSNR: 00
-	TRACE: 8
-	USER: abapdev
-<< Passed parameters
-
-
->> RfcOptions
-	Partner Char Size: 1
-	Client: 110
-	User: abapdev
-	Passwd: (- secret -)
-	Language: E
-	SysNr: 00
-	ASHost: sapdev.ffbl.com
-	Codepage: 1100
-	Trace: 32767
-	LogonCheck: 1
-	CompressionType: 1
-	Serialization: 0
-	Ignore Char Conv Errors: 0
-	Substitution Char: 35
-	UseRoundtripOptimization: Off
-	Delta Manager: 1
-<< RfcOptions
-
-2023-03-09 08:52:23.745436 [08412] 	>> RfcOptions::determineType
-determined type RFC_CLIENT
-2023-03-09 08:52:23.745478 [08412] 	<< RfcOptions::determineType returned 0
+2023-03-09 09:06:18.622409 [02208] 	<< RfcOptions::determineType returned 0
 
