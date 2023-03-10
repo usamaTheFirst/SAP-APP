@@ -36,8 +36,11 @@
         <label for="@approvers.DepartmentHeadId">Department Head ID</label>
         <input @bind-value="approvers.DepartmentHeadId" type="number" class="form-control" placeholder="Section Head ID">
     </div>
+    <br/>
+    <div class="form-group">
+        <input style="background-color:#000080; color:white; font-size:large; border-radius:5px; float:right;" @onclick="HandleValidSubmit" type="submit" @onclick:preventDefault />
 
-    <input style="background-color:#000080; color:white; font-size:large; border-radius:5px; width:50%; float:right;" @onclick="HandleValidSubmit" type="submit" @onclick:preventDefault />
+    </div>
 </form>
 
 

@@ -10,7 +10,7 @@
 
 @inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor httpContextAccessor
-@inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
+@inject Microsoft.EntityFrameworkCore.DbContextOptions<IdentityContext> dbContextOptions
 
 <CascadingAuthenticationState>
     <AuthorizeView>
@@ -97,7 +97,7 @@ else
         
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
-        using var context = new SAPConnectionContext(dbContextOptions);
+        using var context = new IdentityContext(dbContextOptions);
 
         var pno = await context.Users
             .Where(u => u.Id == user.Id)

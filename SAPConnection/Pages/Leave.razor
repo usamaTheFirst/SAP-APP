@@ -12,8 +12,9 @@
 @inject IHttpContextAccessor httpContextAccessor
 @inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor httpContextAccessor
-@inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
+@inject Microsoft.EntityFrameworkCore.DbContextOptions<IdentityContext> dbContextOptions
 @inject MyDbContext _context
+@inject WorkFlowService WorkFlowService
 
 
 
@@ -238,6 +239,17 @@
                                 <label>Approver</label>
                             </th>
                         </tr>
+
+                        @if(Location != -1 && newLeave.LeaveType != LeaveTypeModel.Uninitialized)
+                        {
+                            @foreach (var item in workflowItems)
+                            {
+                                
+                            }
+
+
+
+                        }
                         <tr style="border:1px solid black;">
                             <th style="border:1px solid black;">
                                 <label>1.</label>
@@ -278,6 +290,8 @@
     string Date;
     int leaveBln;
     int TotalDays;
+    int Location =-1;
+    List<WorkflowItem> workflowItems = new List<WorkflowItem>();
 
     DateTime date = DateTime.Now.Date;
 
@@ -285,7 +299,13 @@
 
 
 
+    private async Task fetchWorkFlows()
+    {
+        var key = Location + "-" + newLeave.LeaveType;
 
+        List<WorkflowItem> flows = _context.Workflows.AsQueryable().Where(x => x.Key.Contains(key)).ToList();
+
+    }
 
 
     private async Task submitLeaves()
@@ -298,7 +318,7 @@
 
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
-            using var context = new SAPConnectionContext(dbContextOptions);
+            using var context = new IdentityContext(dbContextOptions);
 
             var dept = await context.Users
                 .Where(u => u.Id == user.Id)
@@ -347,7 +367,12 @@
 
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
-            using var context = new SAPConnectionContext(dbContextOptions);
+            using var context = new IdentityContext(dbContextOptions);
+
+
+
+
+
 
             var dept = await context.Users
                 .Where(u => u.Id == user.Id)
@@ -400,12 +425,18 @@
         try
         {
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
-            using var context = new SAPConnectionContext(dbContextOptions);
-            var pno = await context.Users
+            using var context = new IdentityContext(dbContextOptions);
+            var AppUser = await context.Users
                 .Where(u => u.Id == user.Id)
-                .Select(u => u.Pno)
                 .FirstOrDefaultAsync();
-            Pno = pno.ToString();
+            Pno = AppUser.Pno.ToString();
+            Location = AppUser.Location;
+            toastService.ShowError(AppUser.Location.ToString());
+
+            
+
+           
+
             string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
 
             using var connection = new SapNwRfc.SapConnection(connectionString);

@@ -6,10 +6,10 @@ using SAPConnection.Areas.Identity.Data;
 
 namespace SAPConnection.Data;
 
-public class SAPConnectionContext : IdentityDbContext<ApplicationUser>
+public class IdentityContext : IdentityDbContext<ApplicationUser>
 {
 
-    public SAPConnectionContext(DbContextOptions<SAPConnectionContext> options)
+    public IdentityContext(DbContextOptions<IdentityContext> options)
         : base(options)
     {
 

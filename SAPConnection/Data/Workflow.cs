@@ -12,7 +12,7 @@ namespace SAPConnection.Data
 
         public AssignedTask AssignedTask { get; set; }
         public int Level { get; set; }
-        public int ManagerId { get; set; }
+        public ApproverRole ApproverRole { get; set; }
 
 
 
@@ -24,7 +24,7 @@ namespace SAPConnection.Data
 
 public enum AssignedTask
 {
-    Approve, Review
+    Review, Approve 
 }
 
 
@@ -44,4 +44,9 @@ public class WorkFlowService
         await context.SaveChangesAsync();
         
     }
+}
+
+public enum ApproverRole
+{
+    SectionHead = 061, UnitManager = 060, DepartmentHead = 040
 }
