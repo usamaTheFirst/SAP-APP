@@ -12,8 +12,8 @@ using SAPConnection.Data;
 namespace SAPConnection.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230308101725_changesToLeaveModel")]
-    partial class changesToLeaveModel
+    [Migration("20230311075549_12s")]
+    partial class _12s
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,31 @@ namespace SAPConnection.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("leaveModel");
+                });
+
+            modelBuilder.Entity("SAPConnection.Data.WorkflowItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApproverRole")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AssignedTask")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Workflows");
                 });
 #pragma warning restore 612, 618
         }

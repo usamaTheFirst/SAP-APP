@@ -22,15 +22,13 @@
     <div class="mb-3">
         <label>Location</label>
             <select @bind ="Location" class="form-control form-control-lg">
-                <option value="1100">Plant Site</option>
                 <option value="1000">Head Office</option>
+
+                <option value="1100">Plant Site</option>
 
             </select>
     </div>
-        <div class="mb-3">
-            <label>No. of Stages</label>
-            <input value="@numberOfStages" type="number" class="form-control" @onchange="HandleChange" />
-        </div>
+       
         <div class="mb-3">
             <label>Subtype</label>
             <select  @bind="subtype" class="form-control form-control-lg">
@@ -39,7 +37,10 @@
                 <option >Casual</option>
            </select>
         </div>
-     
+        <div class="mb-3">
+            <label>No. of Stages</label>
+            <input value="@numberOfStages" type="number" class="form-control" @onchange="HandleChange" />
+        </div>
         @if(numberOfStages >0)
         {
             @*addItemsToList(numberOfStages);*@

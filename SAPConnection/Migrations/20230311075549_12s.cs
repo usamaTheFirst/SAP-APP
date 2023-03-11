@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SAPConnection.Migrations
 {
     /// <inheritdoc />
-    public partial class abc : Migration
+    public partial class _12s : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,34 +39,44 @@ namespace SAPConnection.Migrations
                     ToDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FromDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LeaveType = table.Column<int>(type: "int", nullable: false),
-                    RouteIdId = table.Column<int>(type: "int", nullable: false),
-                    LeaveOwnerPno = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RouteId = table.Column<int>(type: "int", nullable: false),
+                    LeaveOwnerPno = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    submissionStatus = table.Column<int>(type: "int", nullable: false),
+                    approvalStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_leaveModel", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_leaveModel_Approvers_RouteIdId",
-                        column: x => x.RouteIdId,
-                        principalTable: "Approvers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_leaveModel_RouteIdId",
-                table: "leaveModel",
-                column: "RouteIdId");
+            migrationBuilder.CreateTable(
+                name: "Workflows",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Key = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AssignedTask = table.Column<int>(type: "int", nullable: false),
+                    Level = table.Column<int>(type: "int", nullable: false),
+                    ApproverRole = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Workflows", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Approvers");
+
+            migrationBuilder.DropTable(
                 name: "leaveModel");
 
             migrationBuilder.DropTable(
-                name: "Approvers");
+                name: "Workflows");
         }
     }
 }
