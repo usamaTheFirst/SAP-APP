@@ -1,0 +1,66 @@
+﻿@page "/approvers"
+
+@using SAPConnection.Data
+@inject NavigationManager NavigationManager
+@inject IToastService toastService
+@inject ApproversService ApproversService
+
+
+
+<h3>Approvars</h3>
+
+
+
+<form>
+    
+    <div class="form-group">
+        <label for="@approvers.DepartmentId">Department ID</label>
+        <input  @bind-value ="approvers.DepartmentId" type="number" class="form-control" placeholder="Department ID">
+    </div>
+
+    <div class="form-group">
+        <label for="@approvers.SectionId">Section ID</label>
+        <input @bind-value="approvers.SectionId" type="number" class="form-control" placeholder="Section ID">
+    </div>
+
+    <div class="form-group">
+        <label for="@approvers.SectionHeadId">Section Head ID</label>
+        <input @bind-value="approvers.SectionHeadId" type="number" class="form-control" placeholder="Section Head ID">
+    </div>
+
+    <div class="form-group">
+        <label for="@approvers.UnitManagerId">Unit Manager ID</label>
+        <input @bind-value="approvers.UnitManagerId" type="number" class="form-control" placeholder="Unit Manager ID">
+    </div>
+    <div class="form-group">
+        <label for="@approvers.DepartmentHeadId">Department Head ID</label>
+        <input @bind-value="approvers.DepartmentHeadId" type="number" class="form-control" placeholder="Section Head ID">
+    </div>
+    <br/>
+    <div class="form-group">
+        <input style="background-color:#000080; color:white; font-size:large; border-radius:5px; float:right;" @onclick="HandleValidSubmit" type="submit" @onclick:preventDefault />
+
+    </div>
+</form>
+
+
+
+@code {
+
+
+    ApproversModel approvers = new ApproversModel();
+
+
+    private async Task HandleValidSubmit()
+
+    {
+
+        await ApproversService.CreateApprover(approvers);
+
+        toastService.ShowSuccess("Updated Successfully");
+
+       
+        NavigationManager.NavigateTo("/");
+    }
+
+}

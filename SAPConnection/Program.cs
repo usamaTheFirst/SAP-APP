@@ -10,16 +10,20 @@ using System.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SAPConnectionContextConnection") ?? throw new InvalidOperationException("Connection string 'SAPConnectionContextConnection' not found.");
 
-builder.Services.AddDbContext<SAPConnectionContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContextFactory<MyDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<SAPConnectionContext>();
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<IdentityContext>();
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<LeaveService>();
+builder.Services.AddScoped<WorkFlowService>();
+builder.Services.AddScoped<ApproversService>();
+
+
 
 builder.Services.AddBlazoredToast();
 builder.Services.AddControllers();

@@ -2,8 +2,6 @@
 @using SAPConnection.Data
 @inject LeaveService leaveService
 @inject NavigationManager NavigationManager
-
-
 @inject IToastService toastService
 @inject AuthenticationStateProvider AuthNStateProvider
 @using Microsoft.AspNetCore.Http
@@ -11,68 +9,90 @@
 @using Microsoft.EntityFrameworkCore;
 @using Microsoft.Extensions.Options;
 @using SAPConnection.Areas.Identity.Data;
-@using SAPConnection.Data;
-@using SAPConnection.Migrations;
 @inject IHttpContextAccessor httpContextAccessor
-
 @inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor httpContextAccessor
-@inject Microsoft.EntityFrameworkCore.DbContextOptions<SAPConnectionContext> dbContextOptions
+@inject Microsoft.EntityFrameworkCore.DbContextOptions<IdentityContext> dbContextOptions
+@inject MyDbContext _context
+@inject WorkFlowService WorkFlowService
 
 
 
 
+<link rel="stylesheet" href="~/css/site.css" />
 
-<center><h1 style="font-family:Georgia; font-size:x-large;">Leave Application Form</h1></center>
+
+<div style="display : flex; align-items: end ; justify-content : center ; width : 100% ;border : 2px solid #000080 ; padding : 5px;">
+    <img src="/Images/FFBL.jpg" height="80" width="230" style="display : inline;" />
+</div>
+<br />
 <form>
-    <table cellpadding="14" width=100%>
-        <tr style="background-color: #000080; color: white; font-weight:500; font-size:larger">
+    <table style="width : 100% ; padding-left : 10px ; padding-right : 10px" border="1" cellpadding="10">
+        <tr style="background-color: #000080 ; width : 100%">
             <td colspan="4">
-                <label>Employee Details</label>
-            </td>
-        </tr>
-        <tr width=100%>
-            <td width=20%>
-                <label>Request Date : </label>
-            </td>
-            <td width=30%>
-                <InputDate @bind-Value="@date"  />
-            </td>
-            <td width=20%>
-                <label> Status : </label>
-            </td>
-            <td width=30%>
-                <input type="text" readonly value="Draft" size="35" />
+                <h5 style="color : white">Employee Details</h5>
             </td>
         </tr>
         <tr>
-            <td>
-                <label>Employee Name : </label>
+            <td style="text-align : left">
+                <p style="font-weight : bold">Request Date:</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Name" size="35" />
+            <td style="text-align : left">
+                <InputDate  @bind-Value="@date" />
             </td>
-            <td>
-                <label>Employee Number : </label>
+
+
+            <td style="text-align : left">
+                <p style="font-weight : bold ">Status</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Pno" size="35" />
+            <td style="text-align : left">
+                <p>@newLeave.submissionStatus</p>
             </td>
         </tr>
+
+
+
         <tr>
-            <td>
-                <label>Department : </label>
+            <td style="text-align : left">
+                <p style="font-weight : bold">Employee Name:</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Department" size="35" />
+            <td style="text-align : left">
+                <p>@Name</p>
             </td>
-            <td>
-                <label>Designation : </label>
+
+
+            <td style="text-align : left">
+                <p style="font-weight : bold">Employee Number</p>
             </td>
-            <td>
-                <input type="text" readonly value="@Designation" size="35" />
+            <td style="text-align : left">
+                <p>@Pno</p>
             </td>
         </tr>
+
+
+        <tr>
+            <td style="text-align : left">
+                <p style="font-weight : bold">Department</p>
+            </td>
+            <td style="text-align : left">
+                <p>@Department</p>
+            </td>
+
+
+            <td style="text-align : left">
+                <p style="font-weight : bold">Designation</p>
+            </td>
+            <td style="text-align : left">
+                <p>@Designation</p>
+            </td>
+        </tr>
+
+    </table>
+    <br />
+
+    <table cellpadding="14" width=100%>
+       
+     
         <tr style="background-color: #000080; color: white; font-weight:500; font-size:larger">
             <td colspan="4">
                 <label>Leave Details</label>
@@ -80,47 +100,49 @@
         </tr>
         <tr>
             <td>
-                <label>Leave From : </label>
+                <p style="font-weight : bold">Leave From</p>
             </td>
             <td>
-                <input type="date" size="35" @bind-value="newLeave.FromDate" />
+                <input  type="date" size="35" @bind-value="newLeave.FromDate" />
             </td>
             <td>
-                <label>Leave To : </label>
+                <p style="font-weight : bold">Leave To</p>
             </td>
             <td>
-                <input type="date" size="35" @bind-value="newLeave.ToDate" />
+                <input  type="date"  @bind-value="newLeave.ToDate" />
             </td>
+
         </tr>
         <tr>
             <td>
-                <label>Leave Type : </label>
+                <p style="font-weight : bold">Leave Type</p>
             </td>
             <td>
-                <select @onclick="@fetchleaveBln"  style="width:100%;" @bind="newLeave.LeaveType">
+                <select class="form-select border border-dark" @onclick="@fetchleaveBln" style="width:100%;" @bind="newLeave.LeaveType">
                     <option >Casual</option>
                     <option >Sick</option>
                     <option >Annual</option>
                 </select>
             </td>
            <td colspan="2">
-        <tr>
+        @*<tr>*@
             <td>
-                <label>Leave Balance : </label>
+                <p style="font-weight : bold">Leave Balance</p>
             </td>
             <td>
                         @*<input value="@leaveBln" type="text" readonly size="35" />*@
-                <label>@leaveBln</label>
+                <p style="font-weight : bold">@leaveBln</p>
 
             </td>
             <td>
-                <label>Total Days : </label>
+                <p style="font-weight : bold">Total Balance</p>
             </td>
+           
             <td>
                         @*<input value="@TotalDays" type="text" readonly size="35" />*@
-                <label>@TotalDays</label>
+                <p style="font-weight : bold">@TotalDays</p>
             </td>
-        </tr>
+        @*</tr>*@
             </td>
         </tr>
        
@@ -129,7 +151,7 @@
                 <label>Reason For Leave : </label>
             </td>
             <td colspan="3">
-                <textarea style="width:100%" @bind="newLeave.Reason" required></textarea>
+                <textarea class="border border-dark" style="width:100%" @bind="newLeave.Reason" required></textarea>
             </td>
         </tr>
         <tr>
@@ -140,17 +162,41 @@
                 @*<input name = "attachment" type="file" multiple/>*@
             </td>
         </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+      @*  <tr>
+            
             <td>
 
+                <button style="background-color:#000080; color:white; font-size:large; border-radius:5px;  float:right;" @onclick="submitLeaves" type="submit" @onclick:preventDefault >Save as Draft</button>
+
+
+            </td>
+            <td>
 
                 <input style="background-color:#000080; color:white; font-size:large; border-radius:5px; width:50%; float:right;" @onclick="submitLeaves" type="submit" @onclick:preventDefault />
             </td>
-        </tr>
+        </tr>*@
+
+
     </table>
+
+
+
+
+    <div style="display : flex; align-items: end ; justify-content : end ; width : 100% ; padding : 5px;">
+
+
+        <button style="width : 25%; height : 40px ; color : white; background-color : dodgerblue ; border : 1px solid #dodgerblue; border-radius : 5px" @onclick="SaveAsDraft" type="submit" @onclick:preventDefault>
+
+            Save as Draft
+        </button>
+
+        &nbsp;
+
+        <button style="width : 25%; height : 40px ; color : white; background-color : #000080 ; border : 1px solid #000080; border-radius : 5px" @onclick="submitLeaves" type="submit" @onclick:preventDefault>
+            Submit
+        </button>
+
+    </div>
 
     <div>
         <div style="width:10px;">
@@ -193,6 +239,17 @@
                                 <label>Approver</label>
                             </th>
                         </tr>
+
+                        @if(Location != -1 && newLeave.LeaveType != LeaveTypeModel.Uninitialized)
+                        {
+                            @foreach (var item in workflowItems)
+                            {
+                                
+                            }
+
+
+
+                        }
                         <tr style="border:1px solid black;">
                             <th style="border:1px solid black;">
                                 <label>1.</label>
@@ -233,21 +290,127 @@
     string Date;
     int leaveBln;
     int TotalDays;
+    int Location =-1;
+    List<WorkflowItem> workflowItems = new List<WorkflowItem>();
 
     DateTime date = DateTime.Now.Date;
 
     LeaveModel newLeave = new LeaveModel();
 
+
+
+    private async Task fetchWorkFlows()
+    {
+        var key = Location + "-" + newLeave.LeaveType;
+
+        List<WorkflowItem> flows = _context.Workflows.AsQueryable().Where(x => x.Key.Contains(key)).ToList();
+
+    }
+
+
     private async Task submitLeaves()
     {
-        newLeave.LeaveOwnerPno = Pno;
+
+        try
+        {
+
+            int deptId,sectId;
+
+            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+            using var context = new IdentityContext(dbContextOptions);
+
+            var dept = await context.Users
+                .Where(u => u.Id == user.Id)
+                .Select(u => u.DepartmentId)
+                .FirstOrDefaultAsync();
+            deptId = dept;
 
 
-        await leaveService.CreateLeaveAsync(newLeave);
-        NavigationManager.NavigateTo("all-leaves");
+            var sect = await context.Users
+               .Where(u => u.Id == user.Id)
+               .Select(u => u.SectionId)
+               .FirstOrDefaultAsync();
+            sectId = sect;
+
+            ApproversModel approvers = await _context.Approvers
+        .Where(a => a.SectionId == sectId && a.DepartmentId == deptId).FirstOrDefaultAsync();
+
+
+            toastService.ShowError(approvers.Id.ToString());
+
+            newLeave.LeaveOwnerPno = Pno;
+            newLeave.RouteId = approvers.Id;
+            newLeave.approvalStatus = ApprovalStatus.Pending;
+            newLeave.submissionStatus = SubmissionStatus.Submitted;
+            await leaveService.CreateLeaveAsync(newLeave);
+            NavigationManager.NavigateTo("all-leaves");
+
+
+
+        }catch(Exception e)
+        {
+
+        }
+
 
 
     }
+
+    private async Task SaveAsDraft()
+    {
+
+        try
+        {
+
+            int deptId, sectId;
+
+            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+            using var context = new IdentityContext(dbContextOptions);
+
+
+
+
+
+
+            var dept = await context.Users
+                .Where(u => u.Id == user.Id)
+                .Select(u => u.DepartmentId)
+                .FirstOrDefaultAsync();
+            deptId = dept;
+
+
+            var sect = await context.Users
+               .Where(u => u.Id == user.Id)
+               .Select(u => u.SectionId)
+               .FirstOrDefaultAsync();
+            sectId = sect;
+
+            ApproversModel approvers = await _context.Approvers
+        .Where(a => a.SectionId == sectId && a.DepartmentId == deptId).FirstOrDefaultAsync();
+
+
+
+            newLeave.LeaveOwnerPno = Pno;
+            newLeave.RouteId = approvers.Id;
+            newLeave.approvalStatus = ApprovalStatus.New;
+            newLeave.submissionStatus = SubmissionStatus.Draft;
+            await leaveService.CreateLeaveAsync(newLeave);
+            NavigationManager.NavigateTo("all-leaves");
+
+
+
+        }
+        catch (Exception e)
+        {
+
+        }
+
+
+
+    }
+
 
 
     private void Show()
@@ -259,21 +422,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-
-
-
         try
         {
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
-
-            using var context = new SAPConnectionContext(dbContextOptions);
-
-            var pno = await context.Users
+            using var context = new IdentityContext(dbContextOptions);
+            var AppUser = await context.Users
                 .Where(u => u.Id == user.Id)
-                .Select(u => u.Pno)
                 .FirstOrDefaultAsync();
-            Pno = pno.ToString();
+            Pno = AppUser.Pno.ToString();
+            Location = AppUser.Location;
+            toastService.ShowError(AppUser.Location.ToString());
+
+            
+
+           
+
             string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
 
             using var connection = new SapNwRfc.SapConnection(connectionString);
@@ -327,10 +490,6 @@
             toastService.ShowError("We Ran into some error. Try logging in again");
 
         }
-
-
-
-
 
     }
 

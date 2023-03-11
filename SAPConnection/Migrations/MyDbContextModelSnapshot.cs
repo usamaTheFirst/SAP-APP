@@ -22,6 +22,34 @@ namespace SAPConnection.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("SAPConnection.Data.ApproversModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DepartmentHeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SectionHeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitManagerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Approvers");
+                });
+
             modelBuilder.Entity("SAPConnection.Data.LeaveModel", b =>
                 {
                     b.Property<int>("Id")
@@ -47,12 +75,46 @@ namespace SAPConnection.Migrations
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("RouteId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ToDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("approvalStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("submissionStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("leaveModel");
+                });
+
+            modelBuilder.Entity("SAPConnection.Data.WorkflowItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApproverRole")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AssignedTask")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Workflows");
                 });
 #pragma warning restore 612, 618
         }
