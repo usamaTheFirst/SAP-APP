@@ -170,14 +170,14 @@ else
 
 
             <button style="width : 25%; height : 40px ; color : white; background-color : dodgerblue ; border : 1px solid #dodgerblue; border-radius : 5px" @onclick="saveAsDraft" type="submit" @onclick:preventDefault>
-
-                @workflowApprovers[(int)leave.CurrentStage - 1].AssignedTask
+                Return
             </button>
 
             &nbsp;
 
-            <button style="width : 25%; height : 40px ; color : white; background-color : #000080 ; border : 1px solid #000080; border-radius : 5px" @onclick="submit" type="submit" @onclick:preventDefault>
-                Return
+            <button style="width : 25%; height : 40px ; color : white; background-color : #000080 ; border : 1px solid #000080; border-radius : 5px" @onclick="@(() => positiveAction(leave.Id))" type="submit" @onclick:preventDefault>
+                @workflowApprovers[(int)leave.CurrentStage - 1].AssignedTask
+
             </button>
 
         </div>
@@ -299,43 +299,43 @@ else
 
         //try
         //{
-            ApplicationUser applicationUser = await _context.Users.Where(u => u.Pno == Int32.Parse(leave.LeaveOwnerPno)).FirstAsync();
+        ApplicationUser applicationUser = await _context.Users.Where(u => u.Pno == Int32.Parse(leave.LeaveOwnerPno)).FirstAsync();
 
-            Key = applicationUser.Location + "-" + leave.LeaveType; ;
-            await fetchWorkFlows();
+        Key = applicationUser.Location + "-" + leave.LeaveType; ;
+        await fetchWorkFlows();
 
 
-            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
-            using var context = new IdentityContext(dbContextOptions);
+        using var context = new IdentityContext(dbContextOptions);
 
-            var pno = await context.Users
-                .Where(u => u.Id == user.Id)
-                .Select(u => u.Pno)
-                .FirstOrDefaultAsync();
-            Pno = pno.ToString();
-            string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+        var pno = await context.Users
+            .Where(u => u.Id == user.Id)
+            .Select(u => u.Pno)
+            .FirstOrDefaultAsync();
+        Pno = pno.ToString();
+        string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
 
-            using var connection = new SapNwRfc.SapConnection(connectionString);
+        using var connection = new SapNwRfc.SapConnection(connectionString);
 
-            connection.Connect();
-            var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
-            var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
+        connection.Connect();
+        var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+        var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
                 {
                     Pno = leave.LeaveOwnerPno,
                 });
 
-            //connection.Disconnect();
-            //connection.Dispose();
+        //connection.Disconnect();
+        //connection.Dispose();
 
 
-            string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
+        string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
 
-            using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+        using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
 
-            DevConnection.Connect();
-            var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
-            var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+        DevConnection.Connect();
+        var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+        var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
                 {
                     Pno = Pno,
                     FromDate = "20210430",
@@ -346,20 +346,20 @@ else
 
 
 
-            Name = result.Items[0].Name.ToString();
-            Designation = result.Items[0].Designation.ToString();
-            Department = result.Items[0].Department.ToString();
-            Pno = result.Items[0].Pno.ToString();
-            Date = DateTime.Now.Date.ToString();
-            leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
-            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+        Name = result.Items[0].Name.ToString();
+        Designation = result.Items[0].Designation.ToString();
+        Department = result.Items[0].Department.ToString();
+        Pno = result.Items[0].Pno.ToString();
+        Date = DateTime.Now.Date.ToString();
+        leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+        TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
 
 
-            //Name = "Usama Fayyaz";
-            //Designation = "Management Associates";
-            //Department = "ICT";
-            //Pno = "30000624";
-            //Date = DateTime.Now.Date.ToString();
+        //Name = "Usama Fayyaz";
+        //Designation = "Management Associates";
+        //Department = "ICT";
+        //Pno = "30000624";
+        //Date = DateTime.Now.Date.ToString();
 
         //}
         //catch (Exception e)
@@ -391,6 +391,13 @@ else
         NavigationManager.NavigateTo("/all-leaves");
     }
 
+
+    private async Task positiveAction(int leaveId)
+    {
+        leave.CurrentActioner = workflowApprovers[(int)leave.CurrentStage].Pno;
+        leave.CurrentStage = leave.CurrentStage + 1;
+        leaveService.UpdateLeaveAsync(leave);
+    }
 
     private void Show()
     {
