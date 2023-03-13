@@ -26,6 +26,7 @@ builder.Services.AddScoped<ApproversService>();
 
 
 builder.Services.AddBlazoredToast();
+builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

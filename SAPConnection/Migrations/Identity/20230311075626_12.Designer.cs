@@ -12,8 +12,8 @@ using SAPConnection.Data;
 namespace SAPConnection.Migrations.Identity
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20230310041119_mh32")]
-    partial class mh32
+    [Migration("20230311075626_12")]
+    partial class _12
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

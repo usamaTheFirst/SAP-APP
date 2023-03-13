@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SAPConnection.Migrations.Identity
 {
     /// <inheritdoc />
-    public partial class mh32 : Migration
+    public partial class _12 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

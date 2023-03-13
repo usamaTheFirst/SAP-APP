@@ -212,71 +212,80 @@
                 ">
             </div>
         </div>
+       
+    </div>
+    <br />
+    @if (Location != -1 && newLeave.LeaveType != LeaveTypeModel.Uninitialized)
+    {
         <div colspan="4" style="margin-left:30px;">
             <button @onclick="@Show"><b id="approve_route" style="cursor:pointer;">Approval Route</b></button>
         </div>
-    </div>
-    <br />
-    <table style="width:100%;" hidden="@IsShow">
-        <tr>
-            <td colspan="4">
-                <div id="route_details" style="width:100%">
 
-                    <table style="width:100%; text-align:center;">
-                        <tr>
-                            <td colspan="5" style="background-color:#000080; color:white; text-align:center;">
-                                Approval Route Detail
-                            </td>
-                        </tr>
-                        <tr style="border:1px solid black;">
-                            <th style="border:1px solid black;">
-                                <label>Level</label>
-                            </th>
-                            <th style="border:1px solid black;">
-                                <label>Task</label>
-                            </th>
-                            <th colspan="3" style="border:1px solid black; text-align:right; padding-right: 150px;">
-                                <label>Approver</label>
-                            </th>
-                        </tr>
+        <table style="width:100%;" hidden="@IsShow">
+            <tr>
+                <td colspan="4">
+                    <div id="route_details" style="width:100%">
 
-                        @if(Location != -1 && newLeave.LeaveType != LeaveTypeModel.Uninitialized)
-                        {
-                            @foreach (var item in workflowItems)
+                        <table style="width:100%; text-align:center;">
+                            <tr>
+                                <td colspan="5" style="background-color:#000080; color:white; text-align:center;">
+                                    Approval Route Detail
+                                </td>
+                            </tr>
+                            <tr style="border:1px solid black;">
+                                <th style="border:1px solid black;">
+                                    <label>Level</label>
+                                </th>
+                                <th style="border:1px solid black;">
+                                    <label>Task</label>
+                                </th>
+                                <th colspan="3" style="border:1px solid black; text-align:right; padding-right: 150px;">
+                                    <label>Approver</label>
+                                </th>
+                            </tr>
+                            @if (workflowApprovers != null && workflowApprovers.Count > 0)
                             {
-                                
+
+                            @foreach (var workflowApprover in workflowApprovers.Select((value, index) => new { value, index }))
+                            {
+                                <tr style="border:1px solid black;">
+                                    <th style="border:1px solid black;">
+                                        <label>@(workflowApprover.index+1)</label>
+                                    </th>
+                                    <td style="border:1px solid black;">
+                                        <label>@workflowApprover.value.AssignedTask</label>
+                                    </td>
+                                    <td colspan="3" style="border:1px solid black; text-align:right; padding-right: 100px;">
+                                        <label>@workflowApprover.value.ApproverEmail</label>
+                                    </td>
+                                </tr>
+                            }
+                           
+
                             }
 
+                            
+                       @*     <tr style="border:1px solid black;">
+                                <th style="border:1px solid black;">
+                                    <label>2.</label>
+                                </th>
+                                <td style="border:1px solid black;">
+                                    <label>Approve</label>
+                                </td>
+                                <td colspan="3" style="border:1px solid black; text-align:right; padding-right: 100px;">
+                                    <label>sajid malik/it/ho/ffbl</label>
+                                </td>
+                            </tr>*@
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
 
-                        }
-                        <tr style="border:1px solid black;">
-                            <th style="border:1px solid black;">
-                                <label>1.</label>
-                            </th>
-                            <td style="border:1px solid black;">
-                                <label>Review</label>
-                            </td>
-                            <td colspan="3" style="border:1px solid black; text-align:right; padding-right: 100px;">
-                                <label>naeem iqbal/it/ho/ffbl</label>
-                            </td>
-                        </tr>
-                        <tr style="border:1px solid black;">
-                            <th style="border:1px solid black;">
-                                <label>2.</label>
-                            </th>
-                            <td style="border:1px solid black;">
-                                <label>Approve</label>
-                            </td>
-                            <td colspan="3" style="border:1px solid black; text-align:right; padding-right: 100px;">
-                                <label>sajid malik/it/ho/ffbl</label>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </td>
-        </tr>
-    </table>
+       
+
+    }
     <br />
 </form>
 
@@ -291,20 +300,20 @@
     int leaveBln;
     int TotalDays;
     int Location =-1;
-    List<WorkflowItem> workflowItems = new List<WorkflowItem>();
 
     DateTime date = DateTime.Now.Date;
 
     LeaveModel newLeave = new LeaveModel();
 
-
+    List<WorkflowApproverEmail> workflowApprovers;
 
     private async Task fetchWorkFlows()
     {
+
         var key = Location + "-" + newLeave.LeaveType;
 
-        List<WorkflowItem> flows = _context.Workflows.AsQueryable().Where(x => x.Key.Contains(key)).ToList();
-
+        workflowApprovers = await
+            WorkFlowService.GetWorkflowApproversWithEmail(key, Int32.Parse(Pno));
     }
 
 
@@ -437,45 +446,45 @@
 
            
 
-            string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+            //string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
 
-            using var connection = new SapNwRfc.SapConnection(connectionString);
+            //using var connection = new SapNwRfc.SapConnection(connectionString);
 
-            connection.Connect();
-            var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
-            var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
-                {
-                    Pno = Pno,
-                });
+            //connection.Connect();
+            //var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+            //var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
+            //    {
+            //        Pno = Pno,
+            //    });
 
-            //connection.Disconnect();
-            //connection.Dispose();
-
-
-            string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
-
-            using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
-
-            DevConnection.Connect();
-            var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
-            var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
-                {
-                    Pno = Pno,
-                    FromDate = "20210430",
-                    ToDate = "20210430",
-                    LeaveType = "4000"
-
-                });
+            ////connection.Disconnect();
+            ////connection.Dispose();
 
 
+            //string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
 
-            Name = result.Items[0].Name.ToString();
-            Designation = result.Items[0].Designation.ToString();
-            Department = result.Items[0].Department.ToString();
-            Pno = result.Items[0].Pno.ToString();
-            Date = DateTime.Now.Date.ToString();
-            leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
-            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+            //using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+
+            //DevConnection.Connect();
+            //var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+            //var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+            //    {
+            //        Pno = Pno,
+            //        FromDate = "20210430",
+            //        ToDate = "20210430",
+            //        LeaveType = "4000"
+
+            //    });
+
+
+
+            //Name = result.Items[0].Name.ToString();
+            //Designation = result.Items[0].Designation.ToString();
+            //Department = result.Items[0].Department.ToString();
+            //Pno = result.Items[0].Pno.ToString();
+            //Date = DateTime.Now.Date.ToString();
+            //leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+            //TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
 
 
             //Name = "Usama Fayyaz";
@@ -488,6 +497,7 @@
         catch (Exception e)
         {
             toastService.ShowError("We Ran into some error. Try logging in again");
+
 
         }
 
@@ -506,24 +516,25 @@
 
        try
         {
-           
+            await fetchWorkFlows();
+
             
-                string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
+            //    string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
 
-                using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+            //    using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
 
-                DevConnection.Connect();
-                var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
-                var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
-                    {
-                        Pno = Pno,
-                    FromDate = newLeave.FromDate.Date.ToString("yyyyMMdd"),
-                    ToDate = newLeave.ToDate.Date.ToString("yyyyMMdd"),
-                        LeaveType = temp.ToString()
+            //    DevConnection.Connect();
+            //    var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+            //    var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+            //        {
+            //            Pno = Pno,
+            //        FromDate = newLeave.FromDate.Date.ToString("yyyyMMdd"),
+            //        ToDate = newLeave.ToDate.Date.ToString("yyyyMMdd"),
+            //            LeaveType = temp.ToString()
 
-                    });
-                leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
-            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+            //        });
+            //    leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+            //TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
 
 
 
