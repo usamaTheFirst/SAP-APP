@@ -1,0 +1,443 @@
+﻿@page "/view-manager/{id:int}"
+
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
+@using SAPConnection.Areas.Identity.Data;
+@using SAPConnection.Data;
+@inject LeaveService leaveService
+@inject NavigationManager NavigationManager
+@inject IHttpContextAccessor httpContextAccessor
+@inject IToastService toastService
+@inject UserManager<ApplicationUser> userManager
+@inject Microsoft.EntityFrameworkCore.DbContextOptions<IdentityContext> dbContextOptions
+@inject WorkFlowService WorkFlowService
+@inject IdentityContext _context
+
+
+
+
+
+
+<link rel="stylesheet" href="~/css/site.css" />
+
+
+<div style="display : flex; align-items: end ; justify-content : center ; width : 100% ;border : 2px solid #000080 ; padding : 5px;">
+    <img src="/Images/FFBL.jpg" height="80" width="230" style="display : inline;" />
+</div>
+<br />
+
+@if (leave == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <form>
+        <table style="width : 100% ; padding-left : 10px ; padding-right : 10px" border="1" cellpadding="10">
+            <tr style="background-color: #000080 ; width : 100%">
+                <td colspan="4">
+                    <h5 style="color : white">Employee Details</h5>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align : left">
+                    <p style="font-weight : bold">Request Date:</p>
+                </td>
+                <td style="text-align : left">
+                    <InputDate @bind-Value="@leave.RequestDate" readonly="true" />
+                </td>
+
+
+                <td style="text-align : left">
+                    <p style="font-weight : bold ">Status</p>
+                </td>
+                <td style="text-align : left">
+                    <p>@leave.approvalStatus</p>
+                </td>
+            </tr>
+
+
+
+            <tr>
+                <td style="text-align : left">
+                    <p style="font-weight : bold">Employee Name:</p>
+                </td>
+                <td style="text-align : left">
+                    <p>@Name</p>
+                </td>
+
+
+                <td style="text-align : left">
+                    <p style="font-weight : bold">Employee Number</p>
+                </td>
+                <td style="text-align : left">
+                    <p>@Pno</p>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td style="text-align : left">
+                    <p style="font-weight : bold">Department</p>
+                </td>
+                <td style="text-align : left">
+                    <p>@Department</p>
+                </td>
+
+
+                <td style="text-align : left">
+                    <p style="font-weight : bold">Designation</p>
+                </td>
+                <td style="text-align : left">
+                    <p>@Designation</p>
+                </td>
+            </tr>
+
+        </table>
+        <br />
+
+        <table cellpadding="14" width=100%>
+
+
+            <tr style="background-color: #000080; color: white; font-weight:500; font-size:larger">
+                <td colspan="4">
+                    <label>Leave Details</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-weight : bold">Leave From</p>
+                </td>
+                <td>
+                    <input readonly="true" type="date" size="35" @bind-value="leave.FromDate" />
+                </td>
+                <td>
+                    <p style="font-weight : bold">Leave To</p>
+                </td>
+                <td>
+                    <input readonly="true" type="date" @bind-value="leave.ToDate" />
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-weight : bold">Leave Type</p>
+                </td>
+                <td>
+                    <select disabled="true" class="form-select border border-dark" @onclick="@fetchleaveBln" style="width:100%;" @bind="leave.LeaveType">
+                        <option>Casual</option>
+                        <option>Sick</option>
+                        <option>Annual</option>
+                    </select>
+                </td>
+                <td colspan="2">
+                    @*<tr>*@
+                <td>
+                    <p style="font-weight : bold">Leave Balance</p>
+                </td>
+                <td>
+                        @*<input value="@leaveBln" type="text" readonly size="35" />*@
+                    <p style="font-weight : bold">@leaveBln</p>
+
+                </td>
+                <td>
+                    <p style="font-weight : bold">Total Balance</p>
+                </td>
+
+                <td>
+                        @*<input value="@TotalDays" type="text" readonly size="35" />*@
+                    <p style="font-weight : bold">@TotalDays</p>
+                </td>
+                    @*</tr>*@
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label>Reason For Leave : </label>
+                </td>
+                <td colspan="3">
+                    <textarea readonly="true" class="border border-dark" style="width:100%" @bind="leave.Reason" required></textarea>
+                </td>
+            </tr>
+        </table>
+
+
+
+
+        <div style="display : flex; align-items: end ; justify-content : end ; width : 100% ; padding : 5px;">
+
+
+            <button style="width : 25%; height : 40px ; color : white; background-color : dodgerblue ; border : 1px solid #dodgerblue; border-radius : 5px" @onclick="saveAsDraft" type="submit" @onclick:preventDefault>
+
+                @workflowApprovers[(int)leave.CurrentStage - 1].AssignedTask
+            </button>
+
+            &nbsp;
+
+            <button style="width : 25%; height : 40px ; color : white; background-color : #000080 ; border : 1px solid #000080; border-radius : 5px" @onclick="submit" type="submit" @onclick:preventDefault>
+                Return
+            </button>
+
+        </div>
+
+        <div>
+            <div style="width:10px;">
+                <div onclick="show()"
+                     style="border:1px solid black;
+                    float:left;
+                    font-size:large;
+                    width: 0;
+	                height: 0;
+	                border-top: 8px solid transparent;
+	                border-left: 16px solid #555;
+	                border-bottom: 8px solid transparent;
+                ">
+                </div>
+            </div>
+            <div colspan="4" style="margin-left:30px;">
+                <button @onclick="@Show"><b id="approve_route" style="cursor:pointer;">Approval Route</b></button>
+            </div>
+        </div>
+        <br />
+        <table style="width:100%;" >
+            <tr>
+                <td colspan="4">
+                    <div id="route_details" style="width:100%">
+
+                        <table style="width:100%; text-align:center;">
+                            <tr>
+                                <td colspan="5" style="background-color:#000080; color:white; text-align:center;">
+                                    Approval Route Detail
+                                </td>
+                            </tr>
+                            <tr style="border:1px solid black;">
+                                <th style="border:1px solid black;">
+                                    <label>Level</label>
+                                </th>
+                                <th style="border:1px solid black;">
+                                    <label>Task</label>
+                                </th>
+                                <th colspan="3" style="border:1px solid black; text-align:right; padding-right: 150px;">
+                                    <label>Approver</label>
+                                </th>
+                            </tr>
+                            @if (workflowApprovers != null && workflowApprovers.Count > 0)
+                            {
+
+                                @foreach (var workflowApprover in workflowApprovers.Select((value, index) => new { value, index }))
+                                {
+                                    int index = workflowApprover.index + 1;
+                                    var color = index.Equals(leave.CurrentStage) ? "#00FF00" : "#FFFFFF";
+
+                                    <tr style="border:1px solid black; background-color : @color ; ">
+                                        <th style="border:1px solid black;">
+                                            <label>@(workflowApprover.index + 1) </label>
+                                        </th>
+                                        <td style="border:1px solid black;">
+                                            <label>@workflowApprover.value.AssignedTask</label>
+                                        </td>
+                                        <td colspan="3" style="border:1px solid black; text-align:right; padding-right: 100px;">
+                                            <label>@workflowApprover.value.ApproverEmail</label>
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            }
+
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br />
+    </form>
+}
+
+@code {
+
+
+    private static bool IsShow { get; set; } = true;
+
+    string Name;
+    string Designation;
+    string Department;
+    string Pno;
+    string Date;
+    int leaveBln;
+    int TotalDays;
+    int Location;
+    string Key;
+    List<WorkflowApproverEmail> workflowApprovers;
+
+    private async Task fetchWorkFlows()
+    {
+        workflowApprovers = await
+        WorkFlowService.GetWorkflowApproversWithEmail(Key, Int32.Parse(leave.LeaveOwnerPno));
+    }
+
+
+    [Parameter]
+    public int id { get; set; }
+
+    LeaveModel leave;
+
+    [Inject]
+    private LeaveService LeaveService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        int leaveId;
+
+        if (int.TryParse(id.ToString(), out leaveId))
+        {
+            leave = await LeaveService.GetLeaveAsync(leaveId);
+        }
+
+
+        //try
+        //{
+            ApplicationUser applicationUser = await _context.Users.Where(u => u.Pno == Int32.Parse(leave.LeaveOwnerPno)).FirstAsync();
+
+            Key = applicationUser.Location + "-" + leave.LeaveType; ;
+            await fetchWorkFlows();
+
+
+            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+            using var context = new IdentityContext(dbContextOptions);
+
+            var pno = await context.Users
+                .Where(u => u.Id == user.Id)
+                .Select(u => u.Pno)
+                .FirstOrDefaultAsync();
+            Pno = pno.ToString();
+            string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+
+            using var connection = new SapNwRfc.SapConnection(connectionString);
+
+            connection.Connect();
+            var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+            var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
+                {
+                    Pno = leave.LeaveOwnerPno,
+                });
+
+            //connection.Disconnect();
+            //connection.Dispose();
+
+
+            string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
+
+            using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+
+            DevConnection.Connect();
+            var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+            var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+                {
+                    Pno = Pno,
+                    FromDate = "20210430",
+                    ToDate = "20210430",
+                    LeaveType = "4000"
+
+                });
+
+
+
+            Name = result.Items[0].Name.ToString();
+            Designation = result.Items[0].Designation.ToString();
+            Department = result.Items[0].Department.ToString();
+            Pno = result.Items[0].Pno.ToString();
+            Date = DateTime.Now.Date.ToString();
+            leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+
+
+            //Name = "Usama Fayyaz";
+            //Designation = "Management Associates";
+            //Department = "ICT";
+            //Pno = "30000624";
+            //Date = DateTime.Now.Date.ToString();
+
+        //}
+        //catch (Exception e)
+        //{
+        //    toastService.ShowError("We Ran into some error. Try logging in again");
+        //    toastService.ShowError(e.Message.ToString());
+
+
+        //}
+
+    }
+
+    private async Task submit()
+
+    {
+        leave.approvalStatus = ApprovalStatus.Pending;
+        toastService.ShowSuccess("Submitted Successfully");
+
+        await LeaveService.UpdateLeaveAsync(leave);
+        NavigationManager.NavigateTo("/all-leaves");
+    }
+
+    private async Task saveAsDraft()
+    {
+        leave.approvalStatus = ApprovalStatus.Draft;
+        toastService.ShowSuccess("Updated Successfully");
+
+        await LeaveService.UpdateLeaveAsync(leave);
+        NavigationManager.NavigateTo("/all-leaves");
+    }
+
+
+    private void Show()
+    {
+        IsShow = !IsShow;
+    }
+
+
+    private async Task fetchleaveBln()
+    {
+
+        int temp = (Int32)leave.LeaveType;
+        //toastService.ShowError(temp.ToString());
+
+
+
+        try
+        {
+
+
+            string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
+
+            using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+
+            DevConnection.Connect();
+            var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+            var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+                {
+                    Pno = Pno,
+                    FromDate = leave.FromDate.Date.ToString("yyyyMMdd"),
+                    ToDate = leave.ToDate.Date.ToString("yyyyMMdd"),
+                    LeaveType = temp.ToString()
+
+                });
+            leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+
+
+
+
+
+        }
+        catch (Exception e)
+        {
+            toastService.ShowError("We Ran into some error. Try logging in again");
+
+        }
+    }
+
+
+}
