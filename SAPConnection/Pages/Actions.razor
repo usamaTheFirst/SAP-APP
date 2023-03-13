@@ -1,35 +1,16 @@
-﻿@page "/all-leaves"
+﻿@page "/actions"
 @using Microsoft.AspNetCore.Identity;
 @using Microsoft.EntityFrameworkCore;
 @using SAPConnection.Areas.Identity.Data;
 @using SAPConnection.Data;
-@inject LeaveService leaveService
-@inject IJSRuntime JSRuntime
-
 @inject IHttpContextAccessor httpContextAccessor
-
 @inject UserManager<ApplicationUser> userManager
 @inject IHttpContextAccessor httpContextAccessor
 @inject Microsoft.EntityFrameworkCore.DbContextOptions<IdentityContext> dbContextOptions
-
-<CascadingAuthenticationState>
-    <AuthorizeView>
-
-        <NotAuthorized>
-            @{
-                <RedirectTo></RedirectTo>
-
-            }
-        </NotAuthorized>
-    </AuthorizeView>
-</CascadingAuthenticationState>
+@inject LeaveService leaveService
 
 
-<h3>All Leaves</h3>
-
-
-
-<h1>Leaves</h1>
+<h3>My Actions</h3>
 
 @if (leaves == null)
 {
@@ -37,7 +18,7 @@
 }
 else if (leaves.Count == 0)
 {
-    <p><em>No leaves found.</em></p>
+    <p><em>No Action found.</em></p>
 }
 else
 {
@@ -67,7 +48,7 @@ else
 
 
                     <td>
-                        @if(leave.approvalStatus == ApprovalStatus.Draft)
+                        @if (leave.approvalStatus == ApprovalStatus.Draft)
                         {
                             <a class="btn btn-primary" href="@($"/leaves/{leave.Id}")">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -75,9 +56,9 @@ else
                                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                                 </svg> Edit
                             </a>
- 
+
                         }
-                       
+
 
                     </td>
                 </tr>
@@ -86,32 +67,25 @@ else
     </table>
 }
 
+
 @code {
     List<LeaveModel> leaves;
     string Pno;
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
         using var context = new IdentityContext(dbContextOptions);
 
         var pno = await context.Users
-            .Where(u => u.Id == user.Id)
-            .Select(u => u.Pno)
-            .FirstOrDefaultAsync();
+           .Where(u => u.Id == user.Id)
+           .Select(u => u.Pno)
+           .FirstOrDefaultAsync();
         Pno = pno.ToString();
 
-        leaves = await leaveService.GetLeavesAsync(Pno);
+        leaves = await leaveService.GetPendingActions(Pno);
     }
 
-    private async Task DeleteLeave(int id)
-    {
-        if (await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Are you sure you want to delete this leave request?" }))
-        {
-            await leaveService.DeleteLeaveAsync(id);
-            leaves = await leaveService.GetLeavesAsync(Pno);
-        }
-    }
 }

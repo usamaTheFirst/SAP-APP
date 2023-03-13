@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAPConnection", "SAPConnection\SAPConnection.csproj", "{13B965C4-BAFB-4E3C-93E2-787C18082959}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiTest", "ApiTest\ApiTest.csproj", "{BAB20D31-4424-4AA1-A6DF-559046361206}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiTest", "ApiTest\ApiTest.csproj", "{BAB20D31-4424-4AA1-A6DF-559046361206}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

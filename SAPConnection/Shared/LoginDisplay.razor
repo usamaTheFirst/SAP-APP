@@ -1,7 +1,10 @@
 ﻿<CascadingAuthenticationState>
 <AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
+            <img src="/Images/FFBL.jpg" height="50" width="170" style="display : block;
+  margin-right: auto;" />
+
+        <a href="Identity/Account/Manage"> @context.User.Identity?.Name!</a>
         <form method="post" action="Identity/Account/LogOut">
             <button type="submit" class="nav-link btn btn-link">Log out</button>
         </form>

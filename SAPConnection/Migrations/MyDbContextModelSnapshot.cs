@@ -58,6 +58,12 @@ namespace SAPConnection.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CurrentActioner")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CurrentStage")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("FromDate")
                         .HasColumnType("datetime2");
 
@@ -81,10 +87,10 @@ namespace SAPConnection.Migrations
                     b.Property<DateTime>("ToDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("approvalStatus")
+                    b.Property<int?>("TotalStages")
                         .HasColumnType("int");
 
-                    b.Property<int>("submissionStatus")
+                    b.Property<int>("approvalStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

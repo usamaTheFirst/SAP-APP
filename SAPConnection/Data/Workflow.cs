@@ -85,7 +85,8 @@ public async Task CreateWorkFlow(WorkflowItem workflowItem)
                 .Select(u => new WorkflowApproverEmail
                 {
                     ApproverEmail = u.Email,
-                    AssignedTask = item.AssignedTask
+                    AssignedTask = item.AssignedTask,
+                    Pno = u.Pno
                 })
                 .FirstOrDefaultAsync();
 
@@ -108,5 +109,6 @@ public enum ApproverRole
 public class WorkflowApproverEmail
 {
     public string ApproverEmail { get; set; }
+    public int Pno { get; set; }
     public AssignedTask AssignedTask { get; set; }
 }

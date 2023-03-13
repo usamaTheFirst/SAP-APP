@@ -31,6 +31,19 @@ namespace SAPConnection.Data
             return await query.ToListAsync();
 
         }
+        public async Task<List<LeaveModel>> GetPendingActions(string pno)
+        {
+
+            using var context = _contextFactory.CreateDbContext();
+            var query = context.leaveModel.AsQueryable();
+            if (!string.IsNullOrEmpty(pno))
+            {
+                query = query.Where(x => x.CurrentActioner.Equals(Int32.Parse(pno)) && x.approvalStatus == ApprovalStatus.Pending);
+            }
+            return await query.ToListAsync();
+
+        }
+
 
         public async Task<LeaveModel> GetLeaveAsync(int id)
         {

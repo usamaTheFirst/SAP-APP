@@ -49,7 +49,7 @@ else
                     <p style="font-weight : bold ">Status</p>
                 </td>
                 <td style="text-align : left">
-                    <p>@leave.submissionStatus</p>
+                    <p>@leave.approvalStatus</p>
                 </td>
             </tr>
 
@@ -375,7 +375,6 @@ else
 
     {
         leave.approvalStatus = ApprovalStatus.Pending;
-        leave.submissionStatus = SubmissionStatus.Submitted;
         toastService.ShowSuccess("Submitted Successfully"); 
 
         await LeaveService.UpdateLeaveAsync(leave);
@@ -384,8 +383,7 @@ else
 
     private async Task saveAsDraft()
     {
-        leave.approvalStatus = ApprovalStatus.New;
-        leave.submissionStatus = SubmissionStatus.Draft;
+        leave.approvalStatus = ApprovalStatus.Draft;
         toastService.ShowSuccess("Updated Successfully");
 
         await LeaveService.UpdateLeaveAsync(leave);

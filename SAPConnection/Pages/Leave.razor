@@ -26,7 +26,9 @@
     <img src="/Images/FFBL.jpg" height="80" width="230" style="display : inline;" />
 </div>
 <br />
-<form>
+<EditForm  EditContext="@editContext">
+    <DataAnnotationsValidator />
+
     <table style="width : 100% ; padding-left : 10px ; padding-right : 10px" border="1" cellpadding="10">
         <tr style="background-color: #000080 ; width : 100%">
             <td colspan="4">
@@ -46,7 +48,7 @@
                 <p style="font-weight : bold ">Status</p>
             </td>
             <td style="text-align : left">
-                <p>@newLeave.submissionStatus</p>
+                <p>@newLeave.approvalStatus</p>
             </td>
         </tr>
 
@@ -125,12 +127,10 @@
                 </select>
             </td>
            <td colspan="2">
-        @*<tr>*@
             <td>
                 <p style="font-weight : bold">Leave Balance</p>
             </td>
             <td>
-                        @*<input value="@leaveBln" type="text" readonly size="35" />*@
                 <p style="font-weight : bold">@leaveBln</p>
 
             </td>
@@ -139,10 +139,8 @@
             </td>
            
             <td>
-                        @*<input value="@TotalDays" type="text" readonly size="35" />*@
                 <p style="font-weight : bold">@TotalDays</p>
             </td>
-        @*</tr>*@
             </td>
         </tr>
        
@@ -152,6 +150,8 @@
             </td>
             <td colspan="3">
                 <textarea class="border border-dark" style="width:100%" @bind="newLeave.Reason" required></textarea>
+                <ValidationMessage For="@(() => newLeave.Reason)" />
+
             </td>
         </tr>
         <tr>
@@ -159,23 +159,9 @@
                 <label>Attachments</label>
             </td>
             <td colspan="3">
-                @*<input name = "attachment" type="file" multiple/>*@
             </td>
         </tr>
-      @*  <tr>
-            
-            <td>
-
-                <button style="background-color:#000080; color:white; font-size:large; border-radius:5px;  float:right;" @onclick="submitLeaves" type="submit" @onclick:preventDefault >Save as Draft</button>
-
-
-            </td>
-            <td>
-
-                <input style="background-color:#000080; color:white; font-size:large; border-radius:5px; width:50%; float:right;" @onclick="submitLeaves" type="submit" @onclick:preventDefault />
-            </td>
-        </tr>*@
-
+   
 
     </table>
 
@@ -201,15 +187,7 @@
     <div>
         <div style="width:10px;">
             <div onclick="show()"
-                 style="border:1px solid black;
-                    float:left;
-                    font-size:large;
-                    width: 0;
-	                height: 0;
-	                border-top: 8px solid transparent;
-	                border-left: 16px solid #555;
-	                border-bottom: 8px solid transparent;
-                ">
+               >
             </div>
         </div>
        
@@ -218,7 +196,7 @@
     @if (Location != -1 && newLeave.LeaveType != LeaveTypeModel.Uninitialized)
     {
         <div colspan="4" style="margin-left:30px;">
-            <button @onclick="@Show"><b id="approve_route" style="cursor:pointer;">Approval Route</b></button>
+            <button @onclick="@Show"><b id="approve_route" >Approval Route</b></button>
         </div>
 
         <table style="width:100%;" hidden="@IsShow">
@@ -287,7 +265,7 @@
 
     }
     <br />
-</form>
+</EditForm>
 
 @code {
     private static bool IsShow { get; set; } = true;
@@ -306,6 +284,8 @@
     LeaveModel newLeave = new LeaveModel();
 
     List<WorkflowApproverEmail> workflowApprovers;
+    private EditContext editContext;
+
 
     private async Task fetchWorkFlows()
     {
@@ -319,48 +299,45 @@
 
     private async Task submitLeaves()
     {
-
-        try
+        if (editContext.Validate())
         {
+            try
+            {
 
-            int deptId,sectId;
+                int deptId, sectId;
+                var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+                using var context = new IdentityContext(dbContextOptions);
+                var dept = await context.Users
+                    .Where(u => u.Id == user.Id)
+                    .Select(u => u.DepartmentId)
+                    .FirstOrDefaultAsync();
+                deptId = dept;
+                var sect = await context.Users
+                   .Where(u => u.Id == user.Id)
+                   .Select(u => u.SectionId)
+                   .FirstOrDefaultAsync();
+                sectId = sect;
+                ApproversModel approvers = await _context.Approvers
+            .Where(a => a.SectionId == sectId && a.DepartmentId == deptId).FirstOrDefaultAsync();
+                toastService.ShowError(approvers.Id.ToString());
+                newLeave.LeaveOwnerPno = Pno;
+                newLeave.RouteId = approvers.Id;
+                int totalStages = workflowApprovers.Count;
+                int currentStage =1;
+                int currentActioner = workflowApprovers.First().Pno;
+                newLeave.TotalStages = totalStages;
+                newLeave.CurrentStage = currentStage;
+                newLeave.CurrentActioner = currentActioner;
+                newLeave.approvalStatus = ApprovalStatus.Pending;
+                await leaveService.CreateLeaveAsync(newLeave);
+                NavigationManager.NavigateTo("all-leaves");
+            }
+            catch (Exception e)
+            {
 
-            var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
-
-            using var context = new IdentityContext(dbContextOptions);
-
-            var dept = await context.Users
-                .Where(u => u.Id == user.Id)
-                .Select(u => u.DepartmentId)
-                .FirstOrDefaultAsync();
-            deptId = dept;
-
-
-            var sect = await context.Users
-               .Where(u => u.Id == user.Id)
-               .Select(u => u.SectionId)
-               .FirstOrDefaultAsync();
-            sectId = sect;
-
-            ApproversModel approvers = await _context.Approvers
-        .Where(a => a.SectionId == sectId && a.DepartmentId == deptId).FirstOrDefaultAsync();
-
-
-            toastService.ShowError(approvers.Id.ToString());
-
-            newLeave.LeaveOwnerPno = Pno;
-            newLeave.RouteId = approvers.Id;
-            newLeave.approvalStatus = ApprovalStatus.Pending;
-            newLeave.submissionStatus = SubmissionStatus.Submitted;
-            await leaveService.CreateLeaveAsync(newLeave);
-            NavigationManager.NavigateTo("all-leaves");
-
-
-
-        }catch(Exception e)
-        {
-
+            }
         }
+  
 
 
 
@@ -403,8 +380,7 @@
 
             newLeave.LeaveOwnerPno = Pno;
             newLeave.RouteId = approvers.Id;
-            newLeave.approvalStatus = ApprovalStatus.New;
-            newLeave.submissionStatus = SubmissionStatus.Draft;
+            newLeave.approvalStatus = ApprovalStatus.Draft;
             await leaveService.CreateLeaveAsync(newLeave);
             NavigationManager.NavigateTo("all-leaves");
 
@@ -433,6 +409,8 @@
     {
         try
         {
+            editContext = new EditContext(newLeave);
+
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
             using var context = new IdentityContext(dbContextOptions);
             var AppUser = await context.Users
@@ -440,49 +418,49 @@
                 .FirstOrDefaultAsync();
             Pno = AppUser.Pno.ToString();
             Location = AppUser.Location;
-            toastService.ShowError(AppUser.Location.ToString());
+            //toastService.ShowError(AppUser.Location.ToString());
 
             
 
            
 
-            //string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
+            string connectionString = "AppServerHost=10.1.25.168; SystemNumber=00; User=abapdev; Password=Ffbl@786#; Client=300; Language=EN; PoolSize=5; Trace=8";
 
-            //using var connection = new SapNwRfc.SapConnection(connectionString);
+            using var connection = new SapNwRfc.SapConnection(connectionString);
 
-            //connection.Connect();
-            //var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
-            //var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
-            //    {
-            //        Pno = Pno,
-            //    });
+            connection.Connect();
+            var someFunction = connection.CreateFunction("ZBAPI_EMP_PRSNL_DETAILS");
+            var result = someFunction.Invoke<SAPRFCResult>(new SAPInputParameter
+                {
+                    Pno = Pno,
+                });
 
-            ////connection.Disconnect();
-            ////connection.Dispose();
-
-
-            //string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
-
-            //using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
-
-            //DevConnection.Connect();
-            //var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
-            //var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
-            //    {
-            //        Pno = Pno,
-            //        FromDate = "20210430",
-            //        ToDate = "20210430",
-            //        LeaveType = "4000"
-
-            //    });
+            //connection.Disconnect();
+            //connection.Dispose();
 
 
+            string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
 
-            //Name = result.Items[0].Name.ToString();
-            //Designation = result.Items[0].Designation.ToString();
-            //Department = result.Items[0].Department.ToString();
-            //Pno = result.Items[0].Pno.ToString();
-            //Date = DateTime.Now.Date.ToString();
+            using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+
+            DevConnection.Connect();
+            var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+            var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+                {
+                    Pno = Pno,
+                    FromDate = "20210430",
+                    ToDate = "20210430",
+                    LeaveType = "4000"
+
+                });
+
+
+
+            Name = result.Items[0].Name.ToString();
+            Designation = result.Items[0].Designation.ToString();
+            Department = result.Items[0].Department.ToString();
+            Pno = result.Items[0].Pno.ToString();
+            Date = DateTime.Now.Date.ToString();
             //leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
             //TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
 
@@ -519,22 +497,22 @@
             await fetchWorkFlows();
 
             
-            //    string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
+                string DevconnectionString = "AppServerHost=sapdev.ffbl.com; SystemNumber=00; User=abapdev; Password=Pakistan@786#; Client=110; Language=EN; PoolSize=5; Trace=8";
 
-            //    using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
+                using var DevConnection = new SapNwRfc.SapConnection(DevconnectionString);
 
-            //    DevConnection.Connect();
-            //    var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
-            //    var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
-            //        {
-            //            Pno = Pno,
-            //        FromDate = newLeave.FromDate.Date.ToString("yyyyMMdd"),
-            //        ToDate = newLeave.ToDate.Date.ToString("yyyyMMdd"),
-            //            LeaveType = temp.ToString()
+                DevConnection.Connect();
+                var LeaveBalanceFunction = DevConnection.CreateFunction("ZST_LEAVE_BALN3");
+                var LeaveBalanceResult = LeaveBalanceFunction.Invoke<LeaveBalanceReturnParameter>(new LeaveBalanceInputParameter
+                    {
+                        Pno = Pno,
+                    FromDate = newLeave.FromDate.Date.ToString("yyyyMMdd"),
+                    ToDate = newLeave.ToDate.Date.ToString("yyyyMMdd"),
+                        LeaveType = temp.ToString()
 
-            //        });
-            //    leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
-            //TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
+                    });
+                leaveBln = Convert.ToInt32(float.Parse(LeaveBalanceResult.Bal.ToString()));
+            TotalDays = Convert.ToInt32(float.Parse(LeaveBalanceResult.TotalDays.ToString()));
 
 
 
